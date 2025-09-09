@@ -1,35 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Grid, GridItem } from "@chakra-ui/react";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Grid
+      templateAreas={{
+        // define layout structure, naming areas within a row
+        base: `"nav" "main" "footer"`,
+        lg: `"nav nav nav nav"
+        "aside main main empty"
+        "footer footer footer footer"`, // each string represents a row
+      }}
+      templateColumns={{
+        base: "1fr",
+        lg: "22% 1fr 1fr 1fr",
+      }}
+    >
+      <GridItem area="nav">NavBar</GridItem>
+
+      <GridItem area="aside" hideBelow="lg">
+        Aside
+      </GridItem>
+
+      <GridItem area="main">Main</GridItem>
+
+      <GridItem area="footer">Footer</GridItem>
+    </Grid>
+  );
 }
 
-export default App
+export default App;
