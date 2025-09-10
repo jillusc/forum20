@@ -7,72 +7,34 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import {
-  FaPlusCircle,
-  FaSeedling,
-  FaBullseye,
-  FaSignOutAlt,
-  FaUser,
-  FaSignInAlt,
-  FaUserPlus,
-  FaHome,
-} from "react-icons/fa";
+import { NavItems } from "./NavItems";
 import logo from "../assets/logo.jpg";
 
 const NavBar = () => {
+  // const userLoggedIn = false;
+  const userLoggedIn = true;
+  const itemsToRender = [
+    ...(userLoggedIn ? NavItems.LoggedInItems : NavItems.LoggedOutItems),
+  ];
+
   return (
     <Box>
-      <Flex marginX={5} marginTop={5} align="center" justify="space-between">
-        <Image src={logo} alt="forum20" boxSize="65px" />
-        <Flex align="flex-end" gap={6}>
-          <Link>
-            <Icon as={FaHome} />
-            <Text fontSize="sm" fontWeight="medium">
-              Home
-            </Text>
-          </Link>
-          <Link>
-            <Icon as={FaPlusCircle} />
-            <Text fontSize="sm" fontWeight="medium">
-              Add Post
-            </Text>
-          </Link>
-          <Link>
-            <Icon as={FaSeedling} />
-            <Text fontSize="sm" fontWeight="medium">
-              Feed
-            </Text>
-          </Link>
-          <Link>
-            <Icon as={FaBullseye} />
-            <Text fontSize="sm" fontWeight="medium">
-              Activity
-            </Text>
-          </Link>
-          <Link>
-            <Icon as={FaSignOutAlt} />
-            <Text fontSize="sm" fontWeight="medium">
-              Log out
-            </Text>
-          </Link>
-          <Link>
-            <Icon as={FaUser} />
-            <Text fontSize="sm" fontWeight="medium">
-              Profile
-            </Text>
-          </Link>
-          <Link>
-            <Icon as={FaSignInAlt} />
-            <Text fontSize="sm" fontWeight="medium">
-              Log in
-            </Text>
-          </Link>
-          <Link>
-            <Icon as={FaUserPlus} />
-            <Text fontSize="sm" fontWeight="medium">
-              Sign up
-            </Text>
-          </Link>
+      <Flex marginX={5} marginTop={5} justify="space-between">
+        <Box>
+          <Image src={logo} alt="forum20" boxSize="65px" />
+        </Box>
+        <Flex gap={7}>
+          {itemsToRender.map((item) => (
+            <Link
+              key={item.label}
+              href={item.path}
+              display="flex"
+              alignItems="flex-end"
+            >
+              <Icon as={item.icon} boxSize={item.size} marginBottom={1} />
+              <Text fontSize="md">{item.label}</Text>
+            </Link>
+          ))}
         </Flex>
       </Flex>
       <Separator borderColor="#3c3c3c" marginTop={3} marginBottom={4} />
