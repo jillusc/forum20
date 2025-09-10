@@ -1,7 +1,8 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { Grid, GridItem } from "@chakra-ui/react";
 import { system } from "./theme";
-import NavBar from "./components/NavBar";
+import { NavBar, PostTemplate } from "@/components";
+import { mockPosts } from "./data/mockPosts";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         </GridItem>
 
         <GridItem area="main">Main</GridItem>
+        {mockPosts.length > 0 && <PostTemplate post={mockPosts[24]} />}
 
         <GridItem area="footer">Footer</GridItem>
       </Grid>
