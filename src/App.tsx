@@ -1,5 +1,5 @@
-import { ChakraProvider } from "@chakra-ui/react";
-import { Grid, GridItem } from "@chakra-ui/react";
+import { Route, Routes } from "react-router-dom";
+import { ChakraProvider, Grid, GridItem } from "@chakra-ui/react";
 import { system } from "./theme";
 import { NavBar, PostTemplate } from "@/components";
 import { mockPosts } from "./data/mockPosts";
@@ -28,8 +28,30 @@ function App() {
           Aside
         </GridItem>
 
-        <GridItem area="main">Main</GridItem>
-        {mockPosts.length > 0 && <PostTemplate post={mockPosts[24]} />}
+        <GridItem area="main">
+          <Routes>
+            {/*
+            <Route path="/" element={<PostsPage isHomePage={true} />} />
+            <Route path="/feed" element={<FeedPage />} />
+            <Route path="/activity" element={<ActivityPage />} />
+            <Route path="/login" element={<LogInForm />} />
+            <Route path="/signup" element={<SignUpForm />} />
+            <Route path="/posts/create" element={<AddPostForm />} />
+            <Route path="/posts/:id/edit" element={<EditPostForm />} />
+            <Route path="/posts/:id" element={<PostPage />} />
+            <Route
+              path="/profiles/:id/edit/password"
+              element={<EditPasswordForm />}
+            />
+            <Route path="/profiles/:id/edit" element={<EditProfileForm />} />
+            <Route path="/profiles/:id" element={<ProfilePage />} />
+            // catch-all route
+            <Route path="*" element={<NotFound />} />
+            */}
+          </Routes>
+
+          {mockPosts.length > 0 && <PostTemplate post={mockPosts[24]} />}
+        </GridItem>
 
         <GridItem area="footer">Footer</GridItem>
       </Grid>
