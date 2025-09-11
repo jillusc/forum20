@@ -9,18 +9,10 @@ const themeConfig = defineConfig({
         body: { value: "'Quicksand', sans-serif" },
       },
       colors: {
-        background: {
-          500: { value: "#fff" },
-        },
-        text: {
-          500: { value: "#3c3c3c" },
-        },
-        primary: {
-          500: { value: "#ffdab9" },
-        },
-        secondary: {
-          500: { value: "#8b0000" },
-        },
+        background: { value: "#fff" },
+        text: { value: "#3c3c3c" },
+        primary: { value: "#ffdab9" },
+        secondary: { value: "#8b0000" },
       },
     },
   },
