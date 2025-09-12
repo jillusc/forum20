@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { ChakraProvider, Grid, GridItem } from "@chakra-ui/react";
+import "./api/axiosDefaults";
 import { system } from "./theme";
 import { NavBar, PostTemplate } from "@/components";
 import { mockPosts } from "./data/mockPosts";
