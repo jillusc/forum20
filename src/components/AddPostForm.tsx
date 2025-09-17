@@ -1,7 +1,15 @@
+import { useState } from "react";
 import { Box, HStack, Input, Text, Textarea, VStack } from "@chakra-ui/react";
 import { Button, FormField, FormStyles } from "@/components/ui";
 
 const AddPostForm = () => {
+  const [image, setImage] = useState<File | null>(null);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [artistName, setArtistName] = useState<string | null>(null);
+  const [year, setYear] = useState<number | null>(null);
+  const [isPrivate, setIsPrivate] = useState(false);
+
   return (
     <form>
       <FormStyles title="Create Post" maxWidth="700px">
@@ -30,15 +38,35 @@ const AddPostForm = () => {
               }}
             />
           </Box>
-          <Input id="image-upload" type="file" accept="image/*" />
+          <Input
+            id="image-upload"
+            type="file"
+            display="none"
+            accept="image/*"
+            onChange={(e) =>
+              setImage(
+                e.target.files && e.target.files.length > 0
+                  ? e.target.files[0]
+                  : null
+              )
+            }
+          />
         </label>
         <FormField label={<label htmlFor="title">Title</label>}>
-          <Input id="title" type="text" placeholder="Enter post title" />
+          <Input
+            id="title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter post title"
+          />
         </FormField>
 
         <FormField label={<label htmlFor="content">Content</label>}>
           <Textarea
             id="content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             placeholder="Write something about this..."
             rows={3}
           />
@@ -54,7 +82,13 @@ const AddPostForm = () => {
             </label>
           }
         >
-          <Input id="artist" type="text" placeholder="Enter artist name" />
+          <Input
+            id="artist"
+            value={artistName ?? ""}
+            onChange={(e) => setArtistName(e.target.value)}
+            type="text"
+            placeholder="Enter artist name"
+          />
         </FormField>
 
         <Box display="flex" alignItems="center" gap={3}>
@@ -64,7 +98,16 @@ const AddPostForm = () => {
               (opt.){" "}
             </Text>
           </label>
-          <Input id="year" type="number" placeholder="e.g. 89" width="85px" />
+          <Input
+            id="year"
+            value={year ?? ""}
+            onChange={(e) =>
+              setYear(e.target.value === "" ? null : Number(e.target.value))
+            }
+            type="number"
+            placeholder="e.g. 89"
+            width="85px"
+          />{" "}
         </Box>
 
         <label
@@ -75,11 +118,12 @@ const AddPostForm = () => {
           <input
             id="is-private"
             type="checkbox"
-            checked={false}
+            checked={isPrivate}
+            onChange={(e) => setIsPrivate(e.target.checked)}
             style={{ transform: "scale(1.2)", marginBottom: "1px" }}
           />
         </label>
-        <HStack justify="center" gap={4} my={1}>
+        <HStack justify="center" gap={4}>
           <Button type="submit">Create</Button>
           <Button type="submit" variant="outline">
             Cancel

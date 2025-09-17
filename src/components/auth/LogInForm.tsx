@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Box, Input, Text } from "@chakra-ui/react";
 import { Button, FormStyles, TextLink } from "@/components/ui";
 
 const LogInForm = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   return (
     <form>
       <FormStyles
@@ -20,8 +24,19 @@ const LogInForm = () => {
           </Box>
         }
       >
-        <Input id="username" placeholder="Enter username" />
-        <Input id="password" type="password" placeholder="Enter password" />
+        <Input
+          id="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter username"
+        />
+        <Input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter password"
+        />
 
         <Button type="submit">Log In</Button>
       </FormStyles>
