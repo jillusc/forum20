@@ -4,8 +4,8 @@ import { NavItems } from "./NavItems";
 import logo from "../assets/logo.jpg";
 
 const NavBar = () => {
-  // const userLoggedIn = false;
-  const userLoggedIn = true;
+  const userLoggedIn = false;
+  // const userLoggedIn = true;
   const itemsToRender = userLoggedIn
     ? NavItems.LoggedInItems
     : NavItems.LoggedOutItems;

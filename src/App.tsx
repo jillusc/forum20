@@ -36,14 +36,16 @@ function App() {
             <Route path="/" element={<PostsPage isHomePage={true} />} />
             <Route path="/feed" element={<FeedPage />} />
             <Route path="/activity" element={<ActivityPage />} />
+            */}
             <Route path="/login" element={<LogInForm />} />
             <Route path="/signup" element={<SignUpForm />} />
             <Route path="/posts/create" element={<AddPostForm />} />
+            {/*
             <Route path="/posts/:id/edit" element={<EditPostForm />} />
             <Route path="/posts/:id" element={<PostPage />} />
             <Route
               path="/profiles/:id/edit/password"
-              element={<EditPasswordForm />}
+              element={<ChangePasswordForm />}
             />
             <Route path="/profiles/:id/edit" element={<EditProfileForm />} />
             <Route path="/profiles/:id" element={<ProfilePage />} />
@@ -53,9 +55,6 @@ function App() {
           </Routes>
 
           {mockPosts.length > 0 && <PostTemplate post={mockPosts[24]} />}
-          <SignUpForm />
-          <LogInForm />
-          <AddPostForm />
         </GridItem>
 
         <GridItem area="footer">Footer</GridItem>
