@@ -1,13 +1,5 @@
-import {
-  Box,
-  Button,
-  HStack,
-  Input,
-  Text,
-  Textarea,
-  VStack,
-} from "@chakra-ui/react";
-import { FormField, FormStyles } from "@/components/ui";
+import { Box, HStack, Input, Text, Textarea, VStack } from "@chakra-ui/react";
+import { Button, FormField, FormStyles } from "@/components/ui";
 
 const AddPostForm = () => {
   return (

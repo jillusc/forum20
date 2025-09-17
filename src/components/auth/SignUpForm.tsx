@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { Button, Input } from "@chakra-ui/react";
-import FormStyles from "../ui/FormStyles.tsx";
+import { Input } from "@chakra-ui/react";
+import { Button, FormStyles } from "@/components/ui";
 
 const SignUpForm = () => {
   return (
@@ -17,9 +17,7 @@ const SignUpForm = () => {
         <Input id="password1" type="password" placeholder="Enter password" />
         <Input id="password2" type="password" placeholder="Confirm password" />
 
-        <Button type="submit" marginTop={3} marginBottom={4}>
-          Sign Up
-        </Button>
+        <Button type="submit">Sign Up</Button>
       </FormStyles>
     </form>
   );
