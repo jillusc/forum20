@@ -3,6 +3,8 @@ import { ChakraProvider, Grid, GridItem } from "@chakra-ui/react";
 import "./api/axiosDefaults";
 import { system } from "./theme";
 import { NavBar, PostTemplate } from "@/components";
+import LogInForm from "./components/auth/LogInForm";
+import SignUpForm from "./components/auth/SignUpForm";
 import { mockPosts } from "./data/mockPosts";
 
 function App() {
@@ -52,6 +54,8 @@ function App() {
           </Routes>
 
           {mockPosts.length > 0 && <PostTemplate post={mockPosts[24]} />}
+          <SignUpForm />
+          <LogInForm />
         </GridItem>
 
         <GridItem area="footer">Footer</GridItem>
