@@ -2,9 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import { ChakraProvider, Grid, GridItem } from "@chakra-ui/react";
 import "./api/axiosDefaults";
 import { system } from "./theme";
-import { NavBar, PostTemplate } from "@/components";
+import { AddPostForm, NavBar, PostTemplate } from "@/components";
 import { LogInForm, SignUpForm } from "@/components/auth";
-import AddPostForm from "./components/AddPostForm";
 import { mockPosts } from "./data/mockPosts";
 
 function App() {
