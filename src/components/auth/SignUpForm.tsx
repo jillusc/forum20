@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
-import { Input } from "@chakra-ui/react";
-import { Button, FormStyles } from "@/components/ui";
+import { Box, Input, Text } from "@chakra-ui/react";
+import { Button, FormStyles, TextLink } from "@/components/ui";
 
 const SignUpForm = () => {
   return (
@@ -8,9 +7,17 @@ const SignUpForm = () => {
       <FormStyles
         title="Sign Up"
         bottomText={
-          <>
-            Already registered? <Link to="/login">Log in</Link>
-          </>
+          <Box
+            display="flex"
+            justifyContent="center"
+            gap={2}
+            alignItems="center"
+          >
+            <Text>Already registered?</Text>
+            <Box minW="47px">
+              <TextLink to="/login">Log in</TextLink>
+            </Box>
+          </Box>
         }
       >
         <Input id="username" placeholder="Enter username" />
