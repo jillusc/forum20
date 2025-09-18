@@ -1,14 +1,25 @@
-import { useState } from "react";
-import { Box, HStack, Input, Text, Textarea, VStack } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Box, HStack, Input, Text, Textarea } from "@chakra-ui/react";
 import { Button, FormField, FormStyles } from "@/components/ui";
+import placeholderImage from "@/assets/post_image_placeholder.jpg";
 
 const AddPostForm = () => {
   const [image, setImage] = useState<File | null>(null);
+  const [previewURL, setPreviewURL] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [artistName, setArtistName] = useState<string | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
+
+  // cleanup function for when component unmounts or previewURL changes:
+  useEffect(() => {
+    return () => {
+      if (previewURL) {
+        URL.revokeObjectURL(previewURL);
+      }
+    };
+  }, [previewURL]);
 
   return (
     <form>
@@ -29,7 +40,7 @@ const AddPostForm = () => {
             maxH={{ base: "50vh", md: "60vh" }}
           >
             <img
-              src="/src/assets/post_image_placeholder.jpg"
+              src={previewURL || placeholderImage}
               alt="image preview"
               style={{
                 maxHeight: "100%",
@@ -43,13 +54,16 @@ const AddPostForm = () => {
             type="file"
             display="none"
             accept="image/*"
-            onChange={(e) =>
-              setImage(
-                e.target.files && e.target.files.length > 0
-                  ? e.target.files[0]
-                  : null
-              )
-            }
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null; // store the chosen file
+              if (file) {
+                setImage(file); // save image/file in state
+                setPreviewURL(URL.createObjectURL(file)); // create new preview and save it in state
+              } else {
+                setImage(null);
+                setPreviewURL(null);
+              }
+            }}
           />
         </label>
         <FormField label={<label htmlFor="title">Title</label>}>
