@@ -1,14 +1,55 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, Input, Text } from "@chakra-ui/react";
 import { Button, FormStyles, TextLink } from "@/components/ui";
+import axios from "axios";
+
+interface SignUpErrors {
+  username?: string;
+  password1?: string;
+  password2?: string;
+}
 
 const SignUpForm = () => {
   const [username, setUsername] = useState("");
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<SignUpErrors>({});
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    setLoading(true);
+
+    const dataToSend = {
+      // package local state values under the backend’s expected field names:
+      username,
+      password1,
+      password2,
+    };
+
+    try {
+      const { data } = await axios.post(
+        "/dj-rest-auth/registration/",
+        dataToSend
+      );
+      navigate("/");
+    } catch (err: any) {
+      if (err.response?.data) {
+        setErrors(err.response.data); // check for + store backend error data
+      } else {
+        console.error(err); // log unexpected errors
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <FormStyles
         title="Sign Up"
         bottomText={
@@ -31,6 +72,8 @@ const SignUpForm = () => {
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Enter username"
         />
+        {errors.username && <Text color="red">{errors.username}</Text>}
+
         <Input
           id="password1"
           type="password"
@@ -38,6 +81,8 @@ const SignUpForm = () => {
           onChange={(e) => setPassword1(e.target.value)}
           placeholder="Enter password"
         />
+        {errors.password1 && <Text color="red">{errors.password1}</Text>}
+
         <Input
           id="password2"
           type="password"
@@ -45,6 +90,7 @@ const SignUpForm = () => {
           onChange={(e) => setPassword2(e.target.value)}
           placeholder="Confirm password"
         />
+        {errors.password2 && <Text color="red">{errors.password2}</Text>}
 
         <Button type="submit">Sign Up</Button>
       </FormStyles>

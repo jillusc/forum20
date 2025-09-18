@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, HStack, Input, Text, Textarea } from "@chakra-ui/react";
 import { Button, FormField, FormStyles } from "@/components/ui";
+import type { Errors } from "../types";
+import axios from "axios";
 import placeholderImage from "@/assets/post_image_placeholder.jpg";
 
 const AddPostForm = () => {
@@ -11,6 +14,49 @@ const AddPostForm = () => {
   const [artistName, setArtistName] = useState<string | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
+
+  const navigate = useNavigate();
+
+  const handleCancel = () => {
+    setTitle("");
+    setContent("");
+    setArtistName(null);
+    setYear(null);
+    setImage(null);
+    setPreviewURL(placeholderImage);
+    setIsPrivate(false);
+    setErrors({});
+    navigate("/");
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    setLoading(true);
+
+    const formData = new FormData();
+    if (image) formData.append("image", image);
+    formData.append("title", title);
+    formData.append("content", content);
+    if (artistName) formData.append("artist_name", artistName);
+    if (year !== null) formData.append("year_of_artwork", year.toString());
+    formData.append("is_private", String(isPrivate));
+
+    try {
+      const { data } = await axios.post("/posts/", formData);
+      navigate(`/posts/${data.id}`); // redirect to the new post's page
+    } catch (err: any) {
+      if (err.response?.data) {
+        setErrors(err.response.data); // check for + store backend error data
+      } else {
+        console.error(err); // log unexpected errors
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // cleanup function for when component unmounts or previewURL changes:
   useEffect(() => {
@@ -22,7 +68,7 @@ const AddPostForm = () => {
   }, [previewURL]);
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <FormStyles title="Create Post" maxWidth="700px">
         <label htmlFor="image-upload" style={{ cursor: "pointer" }}>
           <Text
@@ -65,6 +111,7 @@ const AddPostForm = () => {
               }
             }}
           />
+          {errors.image && <Text color="red">{errors.image}</Text>}
         </label>
         <FormField label={<label htmlFor="title">Title</label>}>
           <Input
@@ -74,6 +121,7 @@ const AddPostForm = () => {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter post title"
           />
+          {errors.title && <Text color="red">{errors.title}</Text>}
         </FormField>
 
         <FormField label={<label htmlFor="content">Content</label>}>
@@ -84,6 +132,7 @@ const AddPostForm = () => {
             placeholder="Write something about this..."
             rows={3}
           />
+          {errors.content && <Text color="red">{errors.content}</Text>}
         </FormField>
 
         <FormField
@@ -103,6 +152,7 @@ const AddPostForm = () => {
             type="text"
             placeholder="Enter artist name"
           />
+          {errors.artist_name && <Text color="red">{errors.artist_name}</Text>}
         </FormField>
 
         <Box display="flex" alignItems="center" gap={3}>
@@ -121,7 +171,10 @@ const AddPostForm = () => {
             type="number"
             placeholder="e.g. 89"
             width="85px"
-          />{" "}
+          />
+          {errors.year_of_artwork && (
+            <Text color="red">{errors.year_of_artwork}</Text>
+          )}
         </Box>
 
         <label
@@ -139,7 +192,7 @@ const AddPostForm = () => {
         </label>
         <HStack justify="center" gap={4}>
           <Button type="submit">Create</Button>
-          <Button type="submit" variant="outline">
+          <Button type="button" variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
         </HStack>
