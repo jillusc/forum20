@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Input, Text } from "@chakra-ui/react";
 import { Button, FormStyles, TextLink } from "@/components/ui";
+import { SetCurrentUserContext } from "@/contexts/CurrentUserContext"; // import the setter
 import axios from "axios";
 
 interface SignUpErrors {
@@ -18,6 +19,8 @@ const SignUpForm = () => {
   const [errors, setErrors] = useState<SignUpErrors>({});
 
   const navigate = useNavigate();
+
+  const setCurrentUser = useContext(SetCurrentUserContext);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +39,7 @@ const SignUpForm = () => {
         "/dj-rest-auth/registration/",
         dataToSend
       );
+      setCurrentUser(data.user);
       navigate("/");
     } catch (err: any) {
       if (err.response?.data) {

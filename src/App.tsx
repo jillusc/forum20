@@ -30,6 +30,8 @@ function App() {
 
       <GridItem area="main">
         <Routes>
+          <Route path="/" element={<h1>Home Page Coming Soon</h1>} />
+          <Route path="/feed" element={<h1>Posts Page Coming Soon</h1>} />
           {/*
             <Route path="/" element={<PostsPage isHomePage={true} />} />
             <Route path="/feed" element={<FeedPage />} />
