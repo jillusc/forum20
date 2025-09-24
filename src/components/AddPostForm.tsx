@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Box, HStack, Input, Text, Textarea } from "@chakra-ui/react";
 import { Button, FormField, FormStyles } from "@/components/ui";
 import type { Errors } from "../types";
-import axios from "axios";
 import placeholderImage from "@/assets/post_image_placeholder.jpg";
+import { axiosRes } from "@/api/axiosDefaults";
 
 const AddPostForm = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -45,7 +45,7 @@ const AddPostForm = () => {
     formData.append("is_private", String(isPrivate));
 
     try {
-      const { data } = await axios.post("/posts/", formData);
+      const { data } = await axiosRes.post("/posts/", formData);
       navigate(`/posts/${data.id}`); // redirect to the new post's page
     } catch (err: any) {
       if (err.response?.data) {

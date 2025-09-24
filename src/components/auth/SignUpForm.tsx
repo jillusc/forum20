@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Box, Input, Text } from "@chakra-ui/react";
 import { Button, FormStyles, TextLink } from "@/components/ui";
 import { SetCurrentUserContext } from "@/contexts/CurrentUserContext"; // import the setter
-import axios from "axios";
+import { axiosRes } from "@/api/axiosDefaults";
 
 interface SignUpErrors {
   username?: string;
@@ -35,7 +35,7 @@ const SignUpForm = () => {
     };
 
     try {
-      const { data } = await axios.post(
+      const { data } = await axiosRes.post(
         "/dj-rest-auth/registration/",
         dataToSend
       );

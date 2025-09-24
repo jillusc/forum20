@@ -2,8 +2,8 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Input, Text } from "@chakra-ui/react";
 import { Button, FormStyles, TextLink } from "@/components/ui";
-import { SetCurrentUserContext } from "@/contexts/CurrentUserContext"; // import the setter
-import axios from "axios";
+import { CurrentUserContext } from "@/contexts/CurrentUserContext";
+import { axiosRes } from "@/api/axiosDefaults";
 
 interface LogInErrors {
   username?: string;
@@ -18,7 +18,7 @@ const LogInForm = () => {
 
   const navigate = useNavigate();
 
-  const setCurrentUser = useContext(SetCurrentUserContext);
+  const { setCurrentUser } = useContext(CurrentUserContext)!;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +32,9 @@ const LogInForm = () => {
     };
 
     try {
-      const { data } = await axios.post("/dj-rest-auth/login/", dataToSend);
+      const { data } = await axiosRes.post("/dj-rest-auth/login/", dataToSend);
+      localStorage.setItem("accessToken", data.access_token);
+      localStorage.setItem("refreshToken", data.refresh_token);
       setCurrentUser(data.user);
       navigate("/");
     } catch (err: any) {
