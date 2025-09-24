@@ -1,17 +1,14 @@
 import { useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Box, Separator, Flex, Image, Text, Icon } from "@chakra-ui/react";
-import { NavItems } from "./NavItems";
+import { NavItems } from "@/components";
+import { Avatar } from "@/components/ui";
 import logo from "../assets/logo.jpg";
-import {
-  CurrentUserContext,
-  SetCurrentUserContext,
-} from "@/contexts/CurrentUserContext"; // import contexts
+import { CurrentUserContext } from "@/contexts/CurrentUserContext"; // import contexts
 
 const NavBar = () => {
   // use the context instead of a hardcoded value:
-  const currentUser = useContext(CurrentUserContext);
-  const setCurrentUser = useContext(SetCurrentUserContext);
+  const { currentUser, setCurrentUser } = useContext(CurrentUserContext)!;
   const userLoggedIn = currentUser !== null; // label as logged in - true if user exists ("is not null")
 
   const navigate = useNavigate();
@@ -72,6 +69,13 @@ const NavBar = () => {
                 <Text fontSize="md">{item.label}</Text>
               </Flex>
             )
+          )}
+
+          {/* current user's profile navlink with Avatar component: */}
+          {currentUser && (
+            <NavLink key="Profile" to={`/profiles/${currentUser.profile_id}`}>
+              <Avatar src={currentUser.profile_image} height={40} />
+            </NavLink>
           )}
         </Flex>
       </Flex>
