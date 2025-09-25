@@ -1,16 +1,17 @@
 import {
   Box,
   Flex,
-  HStack,
-  Link,
-  Text,
-  Image,
   Heading,
+  HStack,
+  Image,
+  Link,
   Spacer,
+  Text,
   VStack,
 } from "@chakra-ui/react";
 import { FaHeart, FaCommentDots, FaBookmark } from "react-icons/fa";
 import type { Post } from "../types";
+import { Avatar } from "@/components/ui";
 
 interface Props {
   post: Post;
@@ -30,14 +31,10 @@ const PostTemplate = ({ post }: Props) => {
     >
       <Flex justify="space-between" align="start">
         <Link>
-          {/* Avatar: */}
-          <Image
-            borderRadius="full"
-            boxSize="40px"
-            src={post.profile_image || undefined}
-            alt={post.owner}
-          />
-          <Text>{post.owner}</Text>
+          <VStack align="center" gap={1}>
+            <Avatar src={post.profile_image || undefined} />
+            <Text>{post.owner}</Text>
+          </VStack>
         </Link>
         <HStack gap={3}>
           <Text>{new Date(post.updated_at).toLocaleDateString("en-GB")}</Text>
@@ -92,5 +89,5 @@ const PostTemplate = ({ post }: Props) => {
 
 export default PostTemplate;
 
-// line 37: NOTE: an Image cannot accept a null value (see interface) for the src prop
+// line 35: NOTE: an Image cannot accept a null value (see interface) for the src prop
 // ...so we must convert any null value to undefined before passing it!
