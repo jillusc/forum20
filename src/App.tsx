@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { Grid, GridItem } from "@chakra-ui/react";
 import "./api/axiosDefaults";
-import { AddPostForm, NavBar, PostPage } from "@/components";
+import { AddPostForm, NavBar, PostPage, PostsPage } from "@/components";
 import { LogInForm, SignUpForm } from "@/components/auth";
 
 function App() {
@@ -29,7 +29,7 @@ function App() {
 
       <GridItem area="main">
         <Routes>
-          <Route path="/" element={<h1>Home Page Coming Soon</h1>} />
+          <Route path="/" element={<PostsPage />} />
           <Route path="/feed" element={<h1>Posts Page Coming Soon</h1>} />
           {/*
             <Route path="/" element={<PostsPage isHomePage={true} />} />
