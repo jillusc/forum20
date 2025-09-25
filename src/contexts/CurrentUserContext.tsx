@@ -1,4 +1,10 @@
-import { createContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosRes } from "../api/axiosDefaults";
 import { isAxiosError, type AxiosRequestConfig } from "axios";
@@ -108,6 +114,23 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// lines 14 - 16: create the (empty) context object and export
-// line 23 - 81: create a provider component (it sets up state)
-// line 86: shows the component can wrap other JSX
+// hook to get the value of state in line 26:
+export function useCurrentUser() {
+  const context = useContext(CurrentUserContext);
+  if (!context)
+    throw new Error("useCurrentUser must be used within a CurrentUserProvider");
+  return context.currentUser; // returns only the user
+}
+// hook to get the state setter in line 26:
+export function useSetCurrentUser() {
+  const context = useContext(CurrentUserContext);
+  if (!context)
+    throw new Error(
+      "useSetCurrentUser must be used within a CurrentUserProvider"
+    );
+  return context.setCurrentUser; // returns only the setter
+}
+
+// lines 18 - 22: create the (empty) context object and export
+// line 20 - 87: create a provider component (it sets up state)
+// line 92: shows the component can wrap other JSX
