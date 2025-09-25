@@ -26,6 +26,50 @@ const NavBar = () => {
     localStorage.removeItem("refreshToken");
     setCurrentUser(null); // clear user state upon logout
     navigate("/"); // go to home page
+    setIsBurgerOpen(false); // close burger menu on logout
+  };
+
+  // helper function to render nav items:
+  const renderNavItem = (item: any, onClick?: () => void) => {
+    // logout nav items:
+    if (item.label === "Log out") {
+      return (
+        <Flex
+          key={item.label}
+          align="center"
+          gap={2}
+          cursor="pointer"
+          onClick={() => {
+            handleLogout();
+            if (onClick) onClick();
+          }}
+        >
+          <Icon as={item.icon} boxSize={item.size} />
+          <Text fontSize="md">{item.label}</Text>
+        </Flex>
+      );
+    }
+    // otherwise, all other nav items:
+    return (
+      <NavLink key={item.label} to={item.path!} onClick={onClick}>
+        {({ isActive }) => (
+          <Flex align="center" gap={1}>
+            <Icon
+              as={item.icon}
+              boxSize={isActive ? item.size + 1 : item.size}
+              color={isActive ? "secondary" : "text"}
+            />
+            <Text
+              color={isActive ? "secondary" : "text"}
+              fontSize={isActive ? "lg" : "md"}
+              fontWeight={isActive ? "bold" : "normal"}
+            >
+              {item.label}
+            </Text>
+          </Flex>
+        )}
+      </NavLink>
+    );
   };
 
   return (
@@ -46,43 +90,11 @@ const NavBar = () => {
           {isBurgerOpen ? <FaTimes size={28} /> : <FaBars size={28} />}
         </Box>
 
-        {/* Desktop menu: */}
+        {/* DESKTOP menu: */}
         <Flex gap={5} align="flex-end" display={{ base: "none", md: "flex" }}>
-          {itemsToRender.map((item) =>
-            item.label !== "Log out" ? (
-              <NavLink key={item.label} to={item.path!}>
-                {({ isActive }) => (
-                  <Flex align="center" gap={1}>
-                    <Icon
-                      as={item.icon}
-                      boxSize={isActive ? item.size + 1 : item.size}
-                      color={isActive ? "secondary" : "text"}
-                    />
-                    <Text
-                      color={isActive ? "secondary" : "text"}
-                      fontSize={isActive ? "lg" : "md"}
-                      fontWeight={isActive ? "bold" : "normal"}
-                    >
-                      {item.label}
-                    </Text>
-                  </Flex>
-                )}
-              </NavLink>
-            ) : (
-              // Logout nav item:
-              <Flex
-                key={item.label}
-                align="center"
-                gap={2}
-                cursor="pointer"
-                onClick={handleLogout}
-              >
-                <Icon as={item.icon} boxSize={item.size} />
-                <Text fontSize="md">{item.label}</Text>
-              </Flex>
-            )
-          )}
-          {/* current user's profile navlink with Avatar component: */}
+          {/* call helper function to render nav items: */}
+          {itemsToRender.map((item) => renderNavItem(item))}{" "}
+          {/* current user's profile navlink with Avatar: */}
           {currentUser && (
             <NavLink key="Profile" to={`/profiles/${currentUser.profile_id}`}>
               <Avatar src={currentUser.profile_image} height={40} />
@@ -90,57 +102,21 @@ const NavBar = () => {
           )}
         </Flex>
       </Flex>
+
       <Separator borderColor="text" marginTop={3} marginBottom={4} />
 
-      {/* Mobile menu: */}
+      {/* MOBILE menu: */}
       {isBurgerOpen && (
-        <>
-          <Flex
-            direction="column"
-            gap={4}
-            padding={4}
-            alignItems="flex-end"
-            display={{ base: "flex", md: "none" }}
-          >
-            {itemsToRender.map((item) =>
-              item.label !== "Log out" ? (
-                <NavLink key={item.label} to={item.path!} onClick={toggleMenu}>
-                  {({ isActive }) => (
-                    <Flex align="center" gap={1}>
-                      <Icon
-                        as={item.icon}
-                        boxSize={isActive ? item.size + 1 : item.size}
-                        color={isActive ? "secondary" : "text"}
-                      />
-                      <Text
-                        color={isActive ? "secondary" : "text"}
-                        fontSize={isActive ? "lg" : "md"}
-                        fontWeight={isActive ? "bold" : "normal"}
-                      >
-                        {item.label}
-                      </Text>
-                    </Flex>
-                  )}
-                </NavLink>
-              ) : (
-                // logout nav item:
-                <Flex
-                  key={item.label}
-                  align="center"
-                  gap={2}
-                  cursor="pointer"
-                  onClick={() => {
-                    handleLogout();
-                    toggleMenu();
-                  }}
-                >
-                  <Icon as={item.icon} boxSize={item.size} />
-                  <Text fontSize="md">{item.label}</Text>
-                </Flex>
-              )
-            )}
-          </Flex>
-        </>
+        <Flex
+          direction="column"
+          gap={4}
+          padding={4}
+          alignItems="flex-end"
+          display={{ base: "flex", md: "none" }}
+        >
+          {/* call helper function to render nav items: */}
+          {itemsToRender.map((item) => renderNavItem(item, toggleMenu))}
+        </Flex>
       )}
     </Box>
   );
