@@ -1,9 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { Grid, GridItem } from "@chakra-ui/react";
 import "./api/axiosDefaults";
-import { AddPostForm, NavBar, PostTemplate } from "@/components";
+import { AddPostForm, NavBar, PostPage } from "@/components";
 import { LogInForm, SignUpForm } from "@/components/auth";
-import { mockPosts } from "./data/mockPosts";
 
 function App() {
   return (
@@ -42,8 +41,10 @@ function App() {
           <Route path="/posts/create" element={<AddPostForm />} />
           {/*
             <Route path="/posts/:id/edit" element={<EditPostForm />} />
-            <Route path="/posts/:id" element={<PostPage />} />
-            <Route
+          */}
+          <Route path="/posts/:id" element={<PostPage />} />
+          {/*
+           <Route
               path="/profiles/:id/edit/password"
               element={<ChangePasswordForm />}
             />
@@ -53,8 +54,6 @@ function App() {
             <Route path="*" element={<NotFound />} />
             */}
         </Routes>
-
-        {mockPosts.length > 0 && <PostTemplate post={mockPosts[24]} />}
       </GridItem>
 
       <GridItem area="footer">Footer</GridItem>

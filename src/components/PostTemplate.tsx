@@ -1,17 +1,17 @@
+import { Link } from "react-router-dom";
 import {
   Box,
   Flex,
   Heading,
   HStack,
   Image,
-  Link,
   Spacer,
   Text,
   VStack,
 } from "@chakra-ui/react";
 import { FaHeart, FaCommentDots, FaBookmark } from "react-icons/fa";
-import type { Post } from "../types";
 import { Avatar } from "@/components/ui";
+import type { Post } from "../types";
 
 interface Props {
   post: Post;
@@ -30,7 +30,7 @@ const PostTemplate = ({ post }: Props) => {
       borderRadius="2xl"
     >
       <Flex justify="space-between" align="start">
-        <Link>
+        <Link to={`/profiles/${post.profile_id}`}>
           <VStack align="center" gap={1}>
             <Avatar src={post.profile_image || undefined} />
             <Text>{post.owner}</Text>
@@ -48,15 +48,21 @@ const PostTemplate = ({ post }: Props) => {
           </Heading>
         )}
 
-        <Box display="flex" width="80%" mx="auto" justifyContent="center">
-          <Link>
+        <Box
+          display="flex"
+          width="80%"
+          mx="auto"
+          justifyContent="center"
+          maxH={{ base: "50vh", md: "60vh" }}
+        >
+          <Link to={`/posts/${post.id}`}>
             <Image
               src={post.image}
               alt={`[IMAGE: ${post.title}]`}
               maxH="100%" // makes sure image never exceeds Box height
               width="100%" // responsive width
               objectFit="contain" // maintains aspect ratio
-            />
+            ></Image>
           </Link>
         </Box>
 
