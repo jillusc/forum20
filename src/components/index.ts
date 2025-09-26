@@ -1,4 +1,6 @@
+export { default as ActivityPage } from "./ActivityPage";
 export { default as AddPostForm } from "./AddPostForm";
+export { default as FeedPage } from "./FeedPage";
 export { default as HomePage } from "./HomePage";
 export { default as NavBar } from "./NavBar";
 export { NavItems } from "./NavItems";

@@ -3,6 +3,8 @@ import { Grid, GridItem } from "@chakra-ui/react";
 import "./api/axiosDefaults";
 import { AddPostForm, HomePage, NavBar, PostPage } from "@/components";
 import { LogInForm, SignUpForm } from "@/components/auth";
+import ActivityPage from "./components/ActivityPage";
+import FeedPage from "./components/FeedPage";
 
 function App() {
   return (
@@ -30,12 +32,8 @@ function App() {
       <GridItem area="main">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/feed" element={<h1>Posts Page Coming Soon</h1>} />
-          {/*
-            <Route path="/" element={<PostsPage isHomePage={true} />} />
-            <Route path="/feed" element={<FeedPage />} />
-            <Route path="/activity" element={<ActivityPage />} />
-            */}
+          <Route path="/feed" element={<FeedPage />} />
+          <Route path="/activity" element={<ActivityPage />} />
           <Route path="/login" element={<LogInForm />} />
           <Route path="/signup" element={<SignUpForm />} />
           <Route path="/posts/create" element={<AddPostForm />} />
