@@ -1,15 +1,18 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { Box, Separator, Flex, Image, Text, Icon } from "@chakra-ui/react";
 import { NavItems } from "@/components";
 import { Avatar } from "@/components/ui";
 import logo from "../assets/logo.jpg";
-import { CurrentUserContext } from "@/contexts/CurrentUserContext"; // import contexts
+import {
+  useCurrentUser,
+  useSetCurrentUser,
+} from "@/contexts/CurrentUserContext";
 
 const NavBar = () => {
-  // use the context instead of a hardcoded value:
-  const { currentUser, setCurrentUser } = useContext(CurrentUserContext)!;
+  const currentUser = useCurrentUser(); // grab (and label) the value of the cUser state variable
+  const setCurrentUser = useSetCurrentUser(); // grab (and label) the setter in order to update cUser state
   const userLoggedIn = currentUser !== null; // label as logged in - true if user exists ("is not null")
 
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);

@@ -1,8 +1,8 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Input, Text } from "@chakra-ui/react";
 import { Button, FormStyles, TextLink } from "@/components/ui";
-import { CurrentUserContext } from "@/contexts/CurrentUserContext";
+import { useSetCurrentUser } from "@/contexts/CurrentUserContext";
 import { axiosRes } from "@/api/axiosDefaults";
 
 interface LogInErrors {
@@ -18,7 +18,7 @@ const LogInForm = () => {
 
   const navigate = useNavigate();
 
-  const { setCurrentUser } = useContext(CurrentUserContext)!;
+  const setCurrentUser = useSetCurrentUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
