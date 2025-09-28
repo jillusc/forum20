@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Box, Text } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
+import { usePosts, useSetPosts } from "@/contexts/PostsContext";
 import PostTemplate from "@/components/PostTemplate";
-import type { Post } from "../types";
 
 interface Props {
   filter?: string; // takes an optional filter (for diff. versions of this page)
@@ -10,7 +10,8 @@ interface Props {
 }
 
 const PostsPage = ({ filter = "", message = "No posts found." }: Props) => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const posts = usePosts();
+  const setPosts = useSetPosts();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
