@@ -12,12 +12,75 @@ import {
 import { FaHeart, FaCommentDots, FaBookmark } from "react-icons/fa";
 import { Avatar } from "@/components/ui";
 import type { Post } from "../types";
+import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { useSetPosts } from "@/contexts/PostsContext";
+import { axiosRes } from "@/api/axiosDefaults";
+import { useState } from "react";
 
 interface Props {
   post: Post;
 }
 
 const PostTemplate = ({ post }: Props) => {
+  const [error, setError] = useState("");
+  const currentUser = useCurrentUser(); // define current user
+  const setPosts = useSetPosts();
+  // destructure fields we need from post props:
+  const {
+    id,
+    owner,
+    profile_id,
+    profile_image,
+    comments_count,
+    likes_count,
+    like_id,
+    title,
+    content,
+    image,
+    updated_at,
+    artist_name,
+    year_of_artwork,
+  } = post;
+  const is_owner = currentUser?.username === owner;
+
+  const handleLike = async () => {
+    try {
+      const { data } = await axiosRes.post("/likes/", { post: id });
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === id
+            ? { ...post, likes_count: post.likes_count + 1, like_id: data.id }
+            : post
+        )
+      );
+    } catch (err: any) {
+      if (err.response?.data) {
+        setError(err.response.data); // check for + store backend error data
+      } else {
+        console.error(err); // log unexpected errors
+      }
+    }
+  };
+
+  const handleUnlike = async () => {
+    try {
+      await axiosRes.delete(`/likes/${like_id}/`);
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => {
+          return post.id === id
+            ? { ...post, likes_count: post.likes_count - 1, like_id: null }
+            : post;
+        })
+      );
+    } catch (err: any) {
+      if (err.response?.data) {
+        setError(err.response.data); // check for + store backend error data
+      } else {
+        console.error(err); // log unexpected errors
+      }
+    }
+  };
+
   return (
     <Box
       maxWidth="768px" // cap width at tablet size
@@ -30,10 +93,10 @@ const PostTemplate = ({ post }: Props) => {
       borderRadius="2xl"
     >
       <Flex justify="space-between" align="start">
-        <Link to={`/profiles/${post.profile_id}`}>
+        <Link to={`/profiles/${profile_id}`}>
           <VStack align="center" gap={1}>
-            <Avatar src={post.profile_image || undefined} />
-            <Text>{post.owner}</Text>
+            <Avatar src={profile_image || undefined} />
+            <Text>{owner}</Text>
           </VStack>
         </Link>
         <HStack gap={3}>
@@ -42,9 +105,9 @@ const PostTemplate = ({ post }: Props) => {
         </HStack>
       </Flex>
       <VStack gap={3} mb={5}>
-        {post.title && (
+        {title && (
           <Heading textAlign="center" mb={3}>
-            {post.title}
+            {title}
           </Heading>
         )}
 
@@ -55,10 +118,10 @@ const PostTemplate = ({ post }: Props) => {
           justifyContent="center"
           maxH={{ base: "50vh", md: "60vh" }}
         >
-          <Link to={`/posts/${post.id}`}>
+          <Link to={`/posts/${id}`}>
             <Image
-              src={post.image}
-              alt={`[IMAGE: ${post.title}]`}
+              src={image}
+              alt={`[IMAGE: ${title}]`}
               maxH="100%" // makes sure image never exceeds Box height
               width="100%" // responsive width
               objectFit="contain" // maintains aspect ratio
@@ -67,24 +130,49 @@ const PostTemplate = ({ post }: Props) => {
         </Box>
 
         <VStack gap={3}>
-          {(post.artist_name || post.year_of_artwork) && (
+          {(artist_name || year_of_artwork) && (
             <Text fontWeight="500" textAlign="center">
-              {post.artist_name}
-              {post.artist_name && post.year_of_artwork ? ", '" : ""}
-              {post.year_of_artwork}
+              {artist_name}
+              {artist_name && year_of_artwork ? ", '" : ""}
+              {year_of_artwork}
             </Text>
           )}
-          {post.content && <Text>{post.content}</Text>}
+          {content && <Text mb={4}>{content}</Text>}
         </VStack>
       </VStack>
-      <HStack gap={4} align="center">
-        <HStack gap={2}>
-          <FaHeart />
-          <Text>{post.likes_count}</Text>
-        </HStack>
-        <HStack gap={2}>
-          <FaCommentDots />
-          <Text>{post.comments_count}</Text>
+      <HStack>
+        <HStack gap={4} align="center">
+          <HStack gap={2}>
+            {is_owner ? (
+              <Box color="text">
+                <FaHeart />
+              </Box>
+            ) : like_id ? (
+              <Box
+                as="span"
+                cursor="pointer"
+                onClick={handleUnlike}
+                color="secondary"
+              >
+                <FaHeart />
+              </Box>
+            ) : currentUser ? (
+              <Box as="span" cursor="pointer" onClick={handleLike} color="text">
+                <FaHeart />
+              </Box>
+            ) : (
+              <Box color="text">
+                <FaHeart />
+              </Box>
+            )}
+            <Text>{likes_count}</Text>
+          </HStack>
+          <HStack gap={2}>
+            <Link to={`/posts/${id}`}>
+              <FaCommentDots />
+            </Link>
+            <Text>{comments_count}</Text>
+          </HStack>
         </HStack>
         <Spacer />
         <FaBookmark />
