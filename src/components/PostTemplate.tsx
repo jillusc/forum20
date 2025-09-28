@@ -43,33 +43,18 @@ const PostTemplate = ({ post }: Props) => {
   } = post;
   const is_owner = currentUser?.username === owner;
 
-  const handleLike = async () => {
+  const handleLikeToggle = async () => {
     try {
-      const { data } = await axiosRes.post("/likes/", { post: id });
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.id === id
-            ? { ...post, likes_count: post.likes_count + 1, like_id: data.id }
-            : post
-        )
-      );
-    } catch (err: any) {
-      if (err.response?.data) {
-        setError(err.response.data); // check for + store backend error data
-      } else {
-        console.error(err); // log unexpected errors
-      }
-    }
-  };
-
-  const handleUnlike = async () => {
-    try {
-      await axiosRes.delete(`/likes/${like_id}/`);
+      const { status, data } = await axiosRes.post("/likes/", { post: id });
       setPosts((prevPosts) =>
         prevPosts.map((post) => {
-          return post.id === id
-            ? { ...post, likes_count: post.likes_count - 1, like_id: null }
-            : post;
+          if (post.id !== id) return post;
+          // Backend returns 204 if the like was removed, or data if created.
+          if (status === 204 || data.detail === "like removed") {
+            return { ...post, likes_count: likes_count - 1, like_id: null };
+          } else {
+            return { ...post, likes_count: likes_count + 1, like_id: data.id };
+          }
         })
       );
     } catch (err: any) {
@@ -147,17 +132,13 @@ const PostTemplate = ({ post }: Props) => {
               <Box color="text">
                 <FaHeart />
               </Box>
-            ) : like_id ? (
+            ) : currentUser ? (
               <Box
                 as="span"
                 cursor="pointer"
-                onClick={handleUnlike}
-                color="secondary"
+                onClick={handleLikeToggle}
+                color={like_id ? "secondary" : "text"}
               >
-                <FaHeart />
-              </Box>
-            ) : currentUser ? (
-              <Box as="span" cursor="pointer" onClick={handleLike} color="text">
                 <FaHeart />
               </Box>
             ) : (
