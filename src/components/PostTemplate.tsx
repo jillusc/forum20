@@ -9,7 +9,12 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { FaHeart, FaCommentDots, FaBookmark } from "react-icons/fa";
+import {
+  FaHeart,
+  FaCommentDots,
+  FaBookmark,
+  FaRegBookmark,
+} from "react-icons/fa";
 import { Avatar } from "@/components/ui";
 import type { Post } from "../types";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
@@ -41,8 +46,10 @@ const PostTemplate = ({ post, setPost }: Props) => {
     updated_at,
     artist_name,
     year_of_artwork,
+    bookmark_id,
   } = post;
   const is_owner = currentUser?.username === owner;
+  const isBookmarked = !!bookmark_id; // "if a bookmark_id exists, this means the current user has bookmarked this post, so return true"
 
   const handleLikeToggle = async () => {
     try {
@@ -51,8 +58,8 @@ const PostTemplate = ({ post, setPost }: Props) => {
       setPosts((prevPosts) =>
         prevPosts.map((post) => {
           if (post.id !== id) return post;
-          // Backend returns 204 if the like was removed, or data if created.
-          if (status === 204 || data.detail === "like removed") {
+          // backend returns 204 if the like was removed, or data if created:
+          if (status === 204 || data.detail === "unliked") {
             return { ...post, likes_count: likes_count - 1, like_id: null };
           } else {
             return { ...post, likes_count: likes_count + 1, like_id: data.id };
@@ -79,6 +86,38 @@ const PostTemplate = ({ post, setPost }: Props) => {
       } else {
         console.error(err); // log unexpected errors
       }
+    }
+  };
+
+  const handleBookmarkToggle = async () => {
+    try {
+      const { status, data } = await axiosRes.post("/bookmarks/", { post: id });
+      // 1. update the global posts list (i.e. PostsPage):
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => {
+          if (post.id !== id) return post;
+          // backend returns 204 if the bookmark was removed, or data if created:
+          if (status === 204 || data.detail === "bookmark removed") {
+            return { ...post, bookmark_id: null };
+          } else {
+            return { ...post, bookmark_id: data.id };
+          }
+        })
+      );
+      // 2. update the local post if setPost is passed (i.e. from PostPage)
+      setPost?.((prev) =>
+        prev && prev.id === id
+          ? {
+              ...prev,
+              bookmark_id:
+                status === 204 || data.detail === "bookmark removed"
+                  ? null
+                  : data.id,
+            }
+          : prev
+      );
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -172,7 +211,15 @@ const PostTemplate = ({ post, setPost }: Props) => {
           </HStack>
         </HStack>
         <Spacer />
-        <FaBookmark />
+        {is_owner ? (
+          <Box color="text">
+            <FaRegBookmark />
+          </Box>
+        ) : (
+          <Box as="span" cursor="pointer" onClick={handleBookmarkToggle}>
+            {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
+          </Box>
+        )}
       </HStack>
     </Box>
   );
@@ -180,5 +227,5 @@ const PostTemplate = ({ post, setPost }: Props) => {
 
 export default PostTemplate;
 
-// line 43: NOTE: an Image cannot accept a null value (see interface) for the src prop
-// ...so we must convert any null value to undefined before passing it!
+// line 50: bookmark_id in the post props is only set for the currently logged-in user,
+// so checking !!bookmark_id lets the frontend know whether that user has already bookmarked this post
