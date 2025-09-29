@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Text } from "@chakra-ui/react";
-import axios from "axios";
+import { axiosRes } from "@/api/axiosDefaults";
 import PostTemplate from "@/components/PostTemplate";
+import { usePosts, useSetPosts } from "@/contexts/PostsContext";
 import type { Post } from "../types";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>(); // grab the post ID from the URL
+  const posts = usePosts();
+  const setPosts = useSetPosts();
   const [post, setPost] = useState<Post | null>(null); // to store post data
   const [loading, setLoading] = useState(true); // to track whether the API call is in progress
   const [error, setError] = useState<string | null>(null); // to store any fetch errors
@@ -14,11 +17,25 @@ const PostPage = () => {
   // use useEffect to fetch the post when this component mounts
   useEffect(() => {
     if (!id) return; // if post ID is not available in the URL, do nothing
-    axios
+    axiosRes
       .get(`/posts/${id}/`)
       // take the response...
       .then((res) => {
-        setPost(res.data); // ...and store its data in state
+        setPost(res.data); // ...and store its data in state.
+        // ALSO save the changes in the (global) context:
+        setPosts((prevPosts) => {
+          // check if the post is already in context state:
+          const exists = prevPosts.some((post) => post.id === res.data.id);
+          if (exists) {
+            // update the existing post with new data
+            return prevPosts.map((post) =>
+              post.id === res.data.id ? res.data : post
+            );
+          } else {
+            // add the new post to the list:
+            return [...prevPosts, res.data];
+          }
+        });
       })
       .catch((err: any) => {
         if (err.response?.data) {
@@ -48,4 +65,4 @@ const PostPage = () => {
 
 export default PostPage;
 
-// line 9: useParams() allows us to get URL parameters
+// line 10: useParams() allows us to get URL parameters
