@@ -19,9 +19,10 @@ import { useState } from "react";
 
 interface Props {
   post: Post;
+  setPost?: React.Dispatch<React.SetStateAction<Post | null>>;
 }
 
-const PostTemplate = ({ post }: Props) => {
+const PostTemplate = ({ post, setPost }: Props) => {
   const [error, setError] = useState("");
   const currentUser = useCurrentUser(); // define current user
   const setPosts = useSetPosts();
@@ -46,6 +47,7 @@ const PostTemplate = ({ post }: Props) => {
   const handleLikeToggle = async () => {
     try {
       const { status, data } = await axiosRes.post("/likes/", { post: id });
+      // 1. update the global posts list (i.e. PostsPage):
       setPosts((prevPosts) =>
         prevPosts.map((post) => {
           if (post.id !== id) return post;
@@ -56,6 +58,20 @@ const PostTemplate = ({ post }: Props) => {
             return { ...post, likes_count: likes_count + 1, like_id: data.id };
           }
         })
+      );
+      // 2. update the local post if setPost is passed (i.e. from PostPage)
+      setPost?.((prev) =>
+        prev && prev.id === id
+          ? {
+              ...prev,
+              likes_count:
+                status === 204 || data.detail === "unliked"
+                  ? prev.likes_count - 1
+                  : prev.likes_count + 1,
+              like_id:
+                status === 204 || data.detail === "unliked" ? null : data.id,
+            }
+          : prev
       );
     } catch (err: any) {
       if (err.response?.data) {
@@ -164,5 +180,5 @@ const PostTemplate = ({ post }: Props) => {
 
 export default PostTemplate;
 
-// line 35: NOTE: an Image cannot accept a null value (see interface) for the src prop
+// line 43: NOTE: an Image cannot accept a null value (see interface) for the src prop
 // ...so we must convert any null value to undefined before passing it!
