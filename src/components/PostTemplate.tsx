@@ -151,7 +151,9 @@ const PostTemplate = ({
         <HStack gap={3}>
           <Text>{new Date(updated_at).toLocaleDateString("en-GB")}</Text>
           {is_owner && postIsEditable && (
-            <MoreDropdown onEdit={onEdit} onDelete={onDelete} />
+            <Box position="relative">
+              <MoreDropdown onEdit={onEdit} onDelete={onDelete} />
+            </Box>
           )}
         </HStack>
       </Flex>
@@ -168,16 +170,27 @@ const PostTemplate = ({
           mx="auto"
           justifyContent="center"
           maxH={{ base: "50vh", md: "60vh" }}
+          cursor={postIsEditable ? "default" : "pointer"}
         >
-          <Link to={`/posts/${id}`}>
+          {postIsEditable ? (
             <Image
               src={image}
               alt={`[IMAGE: ${title}]`}
-              maxH="100%" // makes sure image never exceeds Box height
-              width="100%" // responsive width
-              objectFit="contain" // maintains aspect ratio
-            ></Image>
-          </Link>
+              maxH="100%"
+              width="100%"
+              objectFit="contain"
+            />
+          ) : (
+            <Link to={`/posts/${id}`}>
+              <Image
+                src={image}
+                alt={`[IMAGE: ${title}]`}
+                maxH="100%" // makes sure image never exceeds Box height
+                width="100%" // responsive width
+                objectFit="contain" // maintains aspect ratio
+              />
+            </Link>
+          )}
         </Box>
 
         <VStack gap={3}>
