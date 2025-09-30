@@ -1,18 +1,27 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Box, Text } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
 import PostTemplate from "@/components/PostTemplate";
-import { usePosts, useSetPosts } from "@/contexts/PostsContext";
-import type { Post } from "../types";
+import { useSetPosts } from "@/contexts/PostsContext";
+import type { Post } from "@/types";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>(); // grab the post ID from the URL
-  const posts = usePosts();
   const setPosts = useSetPosts();
+  const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null); // to store post data
   const [loading, setLoading] = useState(true); // to track whether the API call is in progress
   const [error, setError] = useState<string | null>(null); // to store any fetch errors
+
+  const handleEdit = () => {
+    navigate(`/posts/${id}/edit`);
+  };
+
+  const handleDelete = async () => {
+    await axiosRes.delete(`/posts/${id}/`);
+    navigate(-2);
+  };
 
   // use useEffect to fetch the post when this component mounts
   useEffect(() => {
@@ -53,11 +62,17 @@ const PostPage = () => {
   // and prevent crashes if required data is missing:
   if (loading) return <Text>Loading…</Text>;
   if (error) return <Text>{error}</Text>;
-  if (!post) return <Text>Post not found</Text>;
+  if (!post) return <Text>Content not found</Text>;
 
   return (
     <Box p={4}>
-      <PostTemplate post={post} />
+      <PostTemplate
+        post={post}
+        setPost={setPost}
+        postIsEditable={true}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
       {/* Comments section will go here */}
     </Box>
   );

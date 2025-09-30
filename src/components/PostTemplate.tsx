@@ -15,8 +15,8 @@ import {
   FaBookmark,
   FaRegBookmark,
 } from "react-icons/fa";
-import { Avatar } from "@/components/ui";
-import type { Post } from "../types";
+import { Avatar, MoreDropdown } from "@/components/ui";
+import type { Post } from "@/types";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
 import { useSetPosts } from "@/contexts/PostsContext";
 import { axiosRes } from "@/api/axiosDefaults";
@@ -25,9 +25,18 @@ import { useState } from "react";
 interface Props {
   post: Post;
   setPost?: React.Dispatch<React.SetStateAction<Post | null>>;
+  postIsEditable?: boolean;
+  onEdit?: () => void; // optional because only 1 of the 2 parents needs them
+  onDelete?: () => void; // these actions are only for a single Post, so are not relevant in PostsPage!
 }
 
-const PostTemplate = ({ post, setPost }: Props) => {
+const PostTemplate = ({
+  post,
+  setPost,
+  postIsEditable = false,
+  onEdit,
+  onDelete,
+}: Props) => {
   const [error, setError] = useState("");
   const currentUser = useCurrentUser(); // define current user
   const setPosts = useSetPosts();
@@ -140,8 +149,10 @@ const PostTemplate = ({ post, setPost }: Props) => {
           </VStack>
         </Link>
         <HStack gap={3}>
-          <Text>{new Date(post.updated_at).toLocaleDateString("en-GB")}</Text>
-          {/* {post.is_owner && postPage && <MoreDropdown />} */}
+          <Text>{new Date(updated_at).toLocaleDateString("en-GB")}</Text>
+          {is_owner && postIsEditable && (
+            <MoreDropdown onEdit={onEdit} onDelete={onDelete} />
+          )}
         </HStack>
       </Flex>
       <VStack gap={3} mb={5}>
@@ -227,5 +238,6 @@ const PostTemplate = ({ post, setPost }: Props) => {
 
 export default PostTemplate;
 
-// line 50: bookmark_id in the post props is only set for the currently logged-in user,
+// line 27: add this because the MoreDropdown shall not be visible on every view
+// line 59: bookmark_id in the post props is only set for the currently logged-in user,
 // so checking !!bookmark_id lets the frontend know whether that user has already bookmarked this post
