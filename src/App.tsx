@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { Grid, GridItem } from "@chakra-ui/react";
 import "@/api/axiosDefaults";
 import { ActivityPage, FeedPage, HomePage, PostPage } from "@/pages";
-import { AddPostForm, NavBar } from "@/components";
+import { AddPostForm, EditPostForm, NavBar } from "@/components";
 import { LogInForm, SignUpForm } from "@/components/auth";
 
 function App() {
@@ -36,9 +36,7 @@ function App() {
           <Route path="/login" element={<LogInForm />} />
           <Route path="/signup" element={<SignUpForm />} />
           <Route path="/posts/create" element={<AddPostForm />} />
-          {/*
-            <Route path="/posts/:id/edit" element={<EditPostForm />} />
-          */}
+          <Route path="/posts/:id/edit" element={<EditPostForm />} />
           <Route path="/posts/:id" element={<PostPage />} />
           {/*
            <Route
