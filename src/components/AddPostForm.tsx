@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, HStack, Input, Text, Textarea } from "@chakra-ui/react";
 import { Button, FormField, FormStyles } from "@/components/ui";
-import type { Errors } from "../types";
+import type { Errors } from "@/types";
 import placeholderImage from "@/assets/post_image_placeholder.jpg";
 import { axiosRes } from "@/api/axiosDefaults";
 

@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import PostsPage from "@/components/PostsPage";
+import PostsPage from "@/pages/PostsPage";
 
 const ProfilePage = () => {
   const { profileId } = useParams<{ profileId: string }>();

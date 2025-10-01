@@ -1,4 +1,4 @@
-import PostsPage from "@/components/PostsPage";
+import PostsPage from "@/pages/PostsPage";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
 
 const ActivityPage = () => {

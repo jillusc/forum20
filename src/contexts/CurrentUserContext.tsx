@@ -6,9 +6,9 @@ import {
   type ReactNode,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { axiosRes } from "../api/axiosDefaults";
+import { axiosRes } from "@/api/axiosDefaults";
 import { isAxiosError, type AxiosRequestConfig } from "axios";
-import type { User } from "../types";
+import type { User } from "@/types";
 
 // type for the context value (user + setter):
 type CurrentUserContextType = {

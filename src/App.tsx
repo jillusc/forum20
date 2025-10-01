@@ -1,10 +1,9 @@
 import { Route, Routes } from "react-router-dom";
 import { Grid, GridItem } from "@chakra-ui/react";
-import "./api/axiosDefaults";
-import { AddPostForm, HomePage, NavBar, PostPage } from "@/components";
+import "@/api/axiosDefaults";
+import { ActivityPage, FeedPage, HomePage, PostPage } from "@/pages";
+import { AddPostForm, NavBar } from "@/components";
 import { LogInForm, SignUpForm } from "@/components/auth";
-import ActivityPage from "./components/ActivityPage";
-import FeedPage from "./components/FeedPage";
 
 function App() {
   return (

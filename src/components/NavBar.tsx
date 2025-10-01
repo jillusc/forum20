@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes } from "react-icons/fa";
 import { Box, Separator, Flex, Image, Text, Icon } from "@chakra-ui/react";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { NavItems } from "@/components";
 import { Avatar } from "@/components/ui";
 import logo from "../assets/logo.jpg";

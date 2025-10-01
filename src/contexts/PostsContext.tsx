@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-import type { Post } from "../types";
+import type { Post } from "@/types";
 
 // type for the context value (posts + setter)
 type PostsContextType = {

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Box, Heading, HStack, Text } from "@chakra-ui/react";
+import PostsPage from "@/pages/PostsPage";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
-import PostsPage from "@/components/PostsPage";
-import { SearchBar, TextLink } from "./ui";
+import { SearchBar, TextLink } from "@/components/ui";
 
 const HomePage = () => {
   const currentUser = useCurrentUser();

@@ -1,5 +1,5 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
-import "./fonts";
+import "@/assets/fonts";
 
 const themeConfig = defineConfig({
   theme: {

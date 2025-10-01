@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Text } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
-import PostTemplate from "@/components/PostTemplate";
 import { useSetPosts } from "@/contexts/PostsContext";
+import PostTemplate from "@/components/PostTemplate";
 import type { Post } from "@/types";
 
 const PostPage = () => {
