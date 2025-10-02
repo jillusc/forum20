@@ -24,10 +24,38 @@ export const CurrentUserContext = createContext<CurrentUserContextType | null>(
 export function CurrentUserProvider({ children }: { children: ReactNode }) {
   // create/define state to track the current logged-in user:
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
-  // --- INTERCEPTOR/S ---
   useEffect(() => {
+    // restore currentUser on page load:
+    const loadCurrentUser = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        try {
+          const { data } = await axiosRes.get("/dj-rest-auth/user/", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setCurrentUser(data); // restore currentUser state
+          setLoading(false);
+        } catch (err) {
+          setError("");
+          console.error(err);
+          setCurrentUser(null);
+          navigate("/login"); // redirect if token invalid/unmount the provider
+        } finally {
+          setLoading(false); // always run after try/catch
+        }
+      } else {
+        setLoading(false); // no token, just stop loading
+      }
+    };
+
+    loadCurrentUser();
+
+    // --- INTERCEPTOR/S ---
     // adds the latest access token to every request!
     const requestInterceptor = axiosRes.interceptors.request.use(
       (config) => {
@@ -106,6 +134,8 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
     };
   }, [navigate]);
 
+  if (loading) return null;
+
   // provide currentUser and setter to all children components:
   return (
     <CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
@@ -131,6 +161,6 @@ export function useSetCurrentUser() {
   return context.setCurrentUser; // returns only the setter
 }
 
-// lines 18 - 22: create the (empty) context object and export
-// line 20 - 87: create a provider component (it sets up state)
-// line 92: shows the component can wrap other JSX
+// lines 20 - 22: create the (empty) context object and export
+// line 24 - 135: create a provider component (it sets up state)
+// line 142: shows the component can wrap other JSX
