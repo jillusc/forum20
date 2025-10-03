@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, VStack } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
 import { useSetPosts } from "@/contexts/PostsContext";
-import PostTemplate from "@/components/PostTemplate";
-import type { Post } from "@/types";
+import { CommentTemplate, PostTemplate } from "@/components";
+import type { Comment, Post } from "@/types";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>(); // grab the post ID from the URL
   const setPosts = useSetPosts();
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null); // to store post data
+  const [comments, setComments] = useState<Comment[]>([]); // to store the fetched comments
   const [loading, setLoading] = useState(true); // to track whether the API call is in progress
   const [error, setError] = useState<string | null>(null); // to store any fetch errors
 
@@ -23,39 +24,45 @@ const PostPage = () => {
     navigate(-2);
   };
 
-  // use useEffect to fetch the post when this component mounts
+  // use useEffect to fetch the post and its comments when this component mounts
   useEffect(() => {
     if (!id) return; // if post ID is not available in the URL, do nothing
-    axiosRes
-      .get(`/posts/${id}/`)
-      // take the response...
-      .then((res) => {
-        setPost(res.data); // ...and store its data in state.
-        // ALSO save the changes in the (global) context:
+    // define an async function because we now need to fetch 2 things in parallel
+    // and we await them with Promise.all for cleaner code:
+    const fetchPostAndComments = async () => {
+      try {
+        // fetch both at the same time:
+        const [postRes, commentsRes] = await Promise.all([
+          axiosRes.get(`/posts/${id}/`),
+          axiosRes.get(`/comments/?post=${id}`),
+        ]);
+        // ...and store their data in state:
+        setPost(postRes.data);
+        setComments(commentsRes.data.results);
+        // ALSO update the (global) posts context:
         setPosts((prevPosts) => {
           // check if the post is already in context state:
-          const exists = prevPosts.some((post) => post.id === res.data.id);
+          const exists = prevPosts.some((post) => post.id === postRes.data.id);
+          // if it does exist, update the existing post with new data:
           if (exists) {
-            // update the existing post with new data
             return prevPosts.map((post) =>
-              post.id === res.data.id ? res.data : post
+              post.id === postRes.data.id ? postRes.data : post
             );
-          } else {
-            // add the new post to the list:
-            return [...prevPosts, res.data];
           }
+          // and add the new post to the list:
+          return [...prevPosts, postRes.data];
         });
-      })
-      .catch((err: any) => {
+      } catch (err: any) {
         if (err.response?.data) {
           setError(err.response.data); // check for + store backend error data
         } else {
           console.error(err); // log unexpected errors
         }
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchPostAndComments(); // now call this async function
   }, [id]); // if the id changes, re-render (= re-fetch)
 
   // Provide fallback UI while data is loading, handle fetch errors,
@@ -65,16 +72,28 @@ const PostPage = () => {
   if (!post) return <Text>Content not found</Text>;
 
   return (
-    <Box p={4}>
-      <PostTemplate
-        post={post}
-        setPost={setPost}
-        postIsEditable={true}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
-      {/* Comments section will go here */}
-    </Box>
+    <>
+      <Box p={4}>
+        <PostTemplate
+          post={post}
+          setPost={setPost}
+          postIsEditable={true}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      </Box>
+      <VStack gap={0}>
+        {comments.length ? (
+          comments.map((comment) => (
+            <CommentTemplate key={comment.id} comment={comment} />
+          ))
+        ) : (
+          <Box maxWidth="768px" width="100%" mx="auto" p={4}>
+            <Text textAlign="left">No comments yet</Text>
+          </Box>
+        )}
+      </VStack>
+    </>
   );
 };
 
