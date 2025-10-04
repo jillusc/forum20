@@ -1,4 +1,5 @@
 export { default as AddCommentForm } from "./AddCommentForm";
+export { default as EditCommentForm } from "./EditCommentForm";
 export { default as AddPostForm } from "./AddPostForm";
 export { default as CommentTemplate } from "./CommentTemplate";
 export { default as EditPostForm } from "./EditPostForm";
