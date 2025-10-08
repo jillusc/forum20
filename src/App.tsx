@@ -1,11 +1,26 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { Grid, GridItem } from "@chakra-ui/react";
 import "@/api/axiosDefaults";
+import { useCurrentUser } from "@/contexts/CurrentUserContext";
 import { ActivityPage, FeedPage, HomePage, PostPage } from "@/pages";
-import { AddPostForm, EditPostForm, NavBar } from "@/components";
+import {
+  AddPostForm,
+  EditPostForm,
+  NavBar,
+  TopProfilesAside,
+} from "@/components";
 import { LogInForm, SignUpForm } from "@/components/auth";
 
 function App() {
+  const currentUser = useCurrentUser();
+  const location = useLocation();
+
+  // define which routes should show the TopProfiles aside:
+  const showAside =
+    location.pathname === "/" ||
+    location.pathname === "/feed" ||
+    location.pathname === "/activity";
+
   return (
     <Grid
       templateAreas={{
@@ -25,7 +40,7 @@ function App() {
       </GridItem>
 
       <GridItem area="aside" hideBelow="lg">
-        Aside
+        {currentUser && showAside && <TopProfilesAside />}
       </GridItem>
 
       <GridItem area="main">
@@ -51,7 +66,7 @@ function App() {
         </Routes>
       </GridItem>
 
-      <GridItem area="footer">Footer</GridItem>
+      <GridItem area="footer"></GridItem>
     </Grid>
   );
 }
