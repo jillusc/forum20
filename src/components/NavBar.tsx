@@ -20,8 +20,13 @@ const NavBar = () => {
 
   const navigate = useNavigate();
 
+  // add dynamic path for Profile so the icon links:
   const itemsToRender = userLoggedIn
-    ? NavItems.LoggedInItems
+    ? NavItems.LoggedInItems.map((item) =>
+        item.label === "Profile" && currentUser
+          ? { ...item, path: `/profiles/${currentUser.profile_id}` }
+          : item
+      )
     : NavItems.LoggedOutItems;
 
   const handleLogout = () => {
@@ -34,7 +39,7 @@ const NavBar = () => {
 
   // helper function to render nav items:
   const renderNavItem = (item: any, onClick?: () => void) => {
-    // logout nav items:
+    // logout nav item:
     if (item.label === "Log out") {
       return (
         <Flex
@@ -99,7 +104,10 @@ const NavBar = () => {
           {itemsToRender.map((item) => renderNavItem(item))}{" "}
           {/* current user's profile navlink with Avatar: */}
           {currentUser && (
-            <NavLink key="Profile" to={`/profiles/${currentUser.profile_id}`}>
+            <NavLink
+              key="ProfileAvatar"
+              to={`/profiles/${currentUser.profile_id}`}
+            >
               <Avatar src={currentUser.profile_image} height={40} />
             </NavLink>
           )}
@@ -117,7 +125,7 @@ const NavBar = () => {
           alignItems="flex-end"
           display={{ base: "flex", md: "none" }}
         >
-          {/* call helper function to render nav items: */}
+          {/* call helper function to render nav items with menu toggle */}
           {itemsToRender.map((item) => renderNavItem(item, toggleMenu))}
         </Flex>
       )}

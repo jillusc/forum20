@@ -2,7 +2,13 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { Grid, GridItem } from "@chakra-ui/react";
 import "@/api/axiosDefaults";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
-import { ActivityPage, FeedPage, HomePage, PostPage } from "@/pages";
+import {
+  ActivityPage,
+  FeedPage,
+  HomePage,
+  PostPage,
+  ProfilePage,
+} from "@/pages";
 import {
   AddPostForm,
   EditPostForm,
@@ -59,8 +65,9 @@ function App() {
               element={<ChangePasswordForm />}
             />
             <Route path="/profiles/:id/edit" element={<EditProfileForm />} />
-            <Route path="/profiles/:id" element={<ProfilePage />} />
-            // catch-all route
+            */}
+          <Route path="/profiles/:id" element={<ProfilePage />} />
+          {/* // catch-all route
             <Route path="*" element={<NotFound />} />
             */}
         </Routes>

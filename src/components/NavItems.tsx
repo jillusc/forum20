@@ -39,13 +39,12 @@ export const NavItems = {
       label: "Profile",
       icon: FaUser,
       size: 4,
-      path: "/profiles/:id",
+      // doesn't need a path: handled dynamically in NavBar
     },
     {
       label: "Log out",
       icon: FaSignOutAlt,
       size: 4,
-      // doesn't need a path, just an action
     },
   ],
 
