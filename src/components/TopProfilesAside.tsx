@@ -1,33 +1,10 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { useFetchProfiles } from "@/hooks/useFetchProfiles";
 import { Box, Heading, HStack, Text, VStack } from "@chakra-ui/react";
-import { axiosRes } from "@/api/axiosDefaults";
-import type { User } from "@/types";
 import Avatar from "./ui/Avatar";
 
-const TopProfiles = () => {
-  const [topProfiles, setTopProfiles] = useState<User[]>([]); // hold the array of user profiles
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const currentUser = useCurrentUser();
-
-  useEffect(() => {
-    const fetchTopProfiles = async () => {
-      try {
-        const { data } = await axiosRes.get(
-          "/profiles/?ordering=-followers_count"
-        );
-        setTopProfiles(data.results.slice(0, 10));
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTopProfiles();
-  }, [currentUser]);
+const TopProfilesAside = () => {
+  const { topProfiles, error } = useFetchProfiles();
 
   return (
     <Box ml={5} mt={16}>
@@ -59,4 +36,4 @@ const TopProfiles = () => {
   );
 };
 
-export default TopProfiles;
+export default TopProfilesAside;
