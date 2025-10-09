@@ -6,5 +6,6 @@ export { default as EditPostForm } from "./EditPostForm";
 export { default as NavBar } from "./NavBar";
 export { NavItems } from "./NavItems";
 export { default as PostTemplate } from "./PostTemplate";
+export { default as ProfileTemplate } from "./ProfileTemplate";
 export { default as TopProfilesAside } from "./TopProfilesAside";
 export { default as TopProfilesBase } from "./TopProfilesBase";
