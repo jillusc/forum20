@@ -25,7 +25,8 @@ function App() {
   const showAside =
     location.pathname === "/" ||
     location.pathname === "/feed" ||
-    location.pathname === "/activity";
+    location.pathname === "/activity" ||
+    location.pathname.startsWith("/profiles/");
 
   return (
     <Grid

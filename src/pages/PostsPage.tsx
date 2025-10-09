@@ -9,12 +9,13 @@ import { SearchBar } from "@/components/ui";
 interface Props {
   filter?: string; // takes an optional filter (for diff. versions of this page)
   message?: string; // text to show if no posts found
+  showExtras?: boolean; // new prop
 }
 
 const PostsPage = ({
   filter = "",
   message = "No posts found.",
-  isHomePage = false,
+  showExtras = true,
 }: Props) => {
   const posts = usePosts();
   const setPosts = useSetPosts();
@@ -49,10 +50,12 @@ const PostsPage = ({
 
   return (
     <Box>
-      <SearchBar onSearch={(text) => setSearchTerm(text)} />
-      <Box display={{ base: "block", lg: "none" }}>
-        {currentUser && <TopProfilesBase />}
-      </Box>
+      {showExtras && <SearchBar onSearch={(text) => setSearchTerm(text)} />}
+      {showExtras && currentUser && (
+        <Box display={{ base: "block", lg: "none" }}>
+          <TopProfilesBase />
+        </Box>
+      )}
       {posts.map((post) => (
         <Box key={post.id} mb={10}>
           <PostTemplate post={post} />

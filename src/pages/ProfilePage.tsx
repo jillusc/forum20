@@ -4,7 +4,7 @@ import { Box, Text } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
 import PostsPage from "@/pages/PostsPage";
 import type { Profile } from "@/types";
-import { ProfileTemplate } from "@/components";
+import { ProfileTemplate, TopProfilesBase } from "@/components";
 
 const ProfilePage = () => {
   const { id } = useParams();
@@ -37,10 +37,14 @@ const ProfilePage = () => {
 
   return (
     <>
+      <Box display={{ base: "block", lg: "none" }}>
+        <TopProfilesBase />
+      </Box>
       <ProfileTemplate profile={profile} />
       <PostsPage
         filter={`owner__profile=${id}&`}
         message={`${profile.owner} hasn't posted anything yet.`}
+        showExtras={false} // hide search bar and TopProfiles
       />
     </>
   );
