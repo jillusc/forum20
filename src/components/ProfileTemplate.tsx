@@ -1,7 +1,8 @@
 import { Box, Heading, HStack, Text, VStack } from "@chakra-ui/react";
-import { Avatar, Button } from "./ui";
+import { Avatar, Button, MoreDropdown } from "./ui";
 import type { Profile } from "@/types";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { profileMenuItems } from "@/data/menuItems";
 
 interface Props {
   profile: Profile;
@@ -36,7 +37,13 @@ const ProfileTemplate = ({ profile }: Props) => {
       borderWidth="2px"
       borderColor="primary"
       borderRadius="2xl"
+      position="relative"
     >
+      {is_owner && (
+        <Box position="absolute" top={4} right={4}>
+          <MoreDropdown menuItems={profileMenuItems} width="210px" />
+        </Box>
+      )}
       <VStack gap={3} mb="5">
         <Avatar src={image || undefined} height={100} />
         <Heading as="h1" size="3xl">
@@ -49,6 +56,7 @@ const ProfileTemplate = ({ profile }: Props) => {
             year: "numeric",
           })}
         </Text>
+
         <HStack gap={8} justify="center">
           {stats.map(({ label, value }) => (
             <VStack key={label} gap={0} align="center">
@@ -57,6 +65,7 @@ const ProfileTemplate = ({ profile }: Props) => {
             </VStack>
           ))}
         </HStack>
+
         {content && (
           <Box width="80%">
             <VStack align="start" gap={1}>
@@ -67,6 +76,7 @@ const ProfileTemplate = ({ profile }: Props) => {
             </VStack>
           </Box>
         )}
+
         {!is_owner && (
           <Box width="100%" display="flex" justifyContent="center">
             <Button>{following_id ? "Unfollow" : "Follow"}</Button>

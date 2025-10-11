@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -20,7 +21,7 @@ import type { Post } from "@/types";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
 import { useSetPosts } from "@/contexts/PostsContext";
 import { axiosRes } from "@/api/axiosDefaults";
-import { useState } from "react";
+import { postMenuItems } from "@/data/menuItems";
 
 interface Props {
   post: Post;
@@ -152,7 +153,7 @@ const PostTemplate = ({
           <Text>{new Date(updated_at).toLocaleDateString("en-GB")}</Text>
           {is_owner && postIsEditable && (
             <Box position="relative">
-              <MoreDropdown onEdit={onEdit} onDelete={onDelete} />
+              <MoreDropdown menuItems={postMenuItems} width="130px" />
             </Box>
           )}
         </HStack>

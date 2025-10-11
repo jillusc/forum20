@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Box, Text, VStack } from "@chakra-ui/react";
-import { FaCaretDown, FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaCaretDown } from "react-icons/fa";
+import type { MenuItem } from "@/data/menuItems";
 
 interface Props {
-  onEdit?: () => void; // although these are NOT optional for this component, we mark them so
-  onDelete?: () => void; // because they ARE optional in the parent, PostTemplate
+  menuItems: MenuItem[];
+  width?: string | number;
 }
 
-const MoreDropdown = ({ onEdit, onDelete }: Props) => {
+const MoreDropdown = ({ menuItems, width = "115px" }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   // click-away listener:
@@ -29,7 +30,7 @@ const MoreDropdown = ({ onEdit, onDelete }: Props) => {
     position: "absolute" as const,
     top: "100%",
     right: 0,
-    minWidth: "115px",
+    width,
     marginTop: 3,
     padding: 2,
     bg: "white",
@@ -52,8 +53,7 @@ const MoreDropdown = ({ onEdit, onDelete }: Props) => {
     <Box position="relative" ref={dropdownRef}>
       <Box
         as={FaCaretDown}
-        boxSize="24px"
-        marginX={2}
+        boxSize="28px"
         borderWidth="2px"
         borderColor="primary"
         borderRadius="100%"
@@ -63,26 +63,19 @@ const MoreDropdown = ({ onEdit, onDelete }: Props) => {
       {isOpen && (
         <Box {...dropdownStyles}>
           <VStack align="stretch" gap={1}>
-            <Box
-              {...itemStyles}
-              onClick={() => {
-                onEdit?.();
-                setIsOpen(false);
-              }}
-            >
-              <FaEdit />
-              <Text>Edit</Text>
-            </Box>
-            <Box
-              {...itemStyles}
-              onClick={() => {
-                onDelete?.();
-                setIsOpen(false);
-              }}
-            >
-              <FaTrashAlt />
-              <Text>Delete</Text>
-            </Box>
+            {menuItems.map((item: MenuItem, index: number) => (
+              <Box
+                key={index}
+                {...itemStyles}
+                onClick={() => {
+                  item.onClick(); // directly call the action
+                  setIsOpen(false);
+                }}
+              >
+                <item.icon />
+                <Text>{item.label}</Text>
+              </Box>
+            ))}
           </VStack>
         </Box>
       )}
