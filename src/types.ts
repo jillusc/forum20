@@ -73,4 +73,5 @@ export interface Errors {
   content?: string;
   artist_name?: string;
   year_of_artwork?: string;
+  owner?: string;
 }

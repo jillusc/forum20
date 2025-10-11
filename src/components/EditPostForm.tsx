@@ -85,7 +85,7 @@ const EditPostForm = () => {
   };
 
   useEffect(() => {
-    // cleanup function for when component unmounts or previewURL changes
+    // cleanup function for when component unmounts or previewURL or avatar changes:
     return () => {
       if (previewURL) {
         URL.revokeObjectURL(previewURL);

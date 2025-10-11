@@ -15,7 +15,7 @@ import {
   NavBar,
   TopProfilesAside,
 } from "@/components";
-import { LogInForm, SignUpForm } from "@/components/auth";
+import { EditProfileForm, LogInForm, SignUpForm } from "@/components/auth";
 
 function App() {
   const currentUser = useCurrentUser();
@@ -65,8 +65,8 @@ function App() {
               path="/profiles/:id/edit/password"
               element={<ChangePasswordForm />}
             />
-            <Route path="/profiles/:id/edit" element={<EditProfileForm />} />
             */}
+          <Route path="/profiles/:id/edit" element={<EditProfileForm />} />
           <Route path="/profiles/:id" element={<ProfilePage />} />
           {/* // catch-all route
             <Route path="*" element={<NotFound />} />
