@@ -153,7 +153,12 @@ const PostTemplate = ({
           <Text>{new Date(updated_at).toLocaleDateString("en-GB")}</Text>
           {is_owner && postIsEditable && (
             <Box position="relative">
-              <MoreDropdown menuItems={postMenuItems} width="130px" />
+              <MoreDropdown
+                menuItems={
+                  onEdit && onDelete ? postMenuItems(onEdit, onDelete) : []
+                }
+                width="130px"
+              />{" "}
             </Box>
           )}
         </HStack>

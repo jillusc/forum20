@@ -15,7 +15,12 @@ import {
   NavBar,
   TopProfilesAside,
 } from "@/components";
-import { EditProfileForm, LogInForm, SignUpForm } from "@/components/auth";
+import {
+  ChangePasswordForm,
+  EditProfileForm,
+  LogInForm,
+  SignUpForm,
+} from "@/components/auth";
 
 function App() {
   const currentUser = useCurrentUser();
@@ -60,12 +65,10 @@ function App() {
           <Route path="/posts/create" element={<AddPostForm />} />
           <Route path="/posts/:id/edit" element={<EditPostForm />} />
           <Route path="/posts/:id" element={<PostPage />} />
-          {/*
-           <Route
-              path="/profiles/:id/edit/password"
-              element={<ChangePasswordForm />}
-            />
-            */}
+          <Route
+            path="/profiles/:id/edit/password"
+            element={<ChangePasswordForm />}
+          />
           <Route path="/profiles/:id/edit" element={<EditProfileForm />} />
           <Route path="/profiles/:id" element={<ProfilePage />} />
           {/* // catch-all route

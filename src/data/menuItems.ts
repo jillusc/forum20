@@ -6,12 +6,24 @@ export interface MenuItem {
   icon: IconType;
   onClick: () => void;
 }
-export const postMenuItems: MenuItem[] = [
-  { label: "Edit", icon: FaEdit, onClick: () => {} },
-  { label: "Delete", icon: FaTrashAlt, onClick: () => {} },
+
+export const postMenuItems = (
+  onEdit: () => void,
+  onDelete: () => void
+): MenuItem[] => [
+  { label: "Edit", icon: FaEdit, onClick: onEdit },
+  { label: "Delete", icon: FaTrashAlt, onClick: onDelete },
 ];
 
-export const profileMenuItems: MenuItem[] = [
-  { label: "Edit profile", icon: FaEdit, onClick: () => {} },
-  { label: "Change password", icon: FaLock, onClick: () => {} },
+export const profileMenuItems = (navigate: any, id: string): MenuItem[] => [
+  {
+    label: "Edit profile",
+    icon: FaEdit,
+    onClick: () => navigate(`/profiles/${id}/edit`),
+  },
+  {
+    label: "Change password",
+    icon: FaLock,
+    onClick: () => navigate(`/profiles/${id}/edit/password`),
+  },
 ];

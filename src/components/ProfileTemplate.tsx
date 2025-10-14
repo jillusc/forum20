@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Box, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import { Avatar, Button, MoreDropdown } from "./ui";
 import type { Profile } from "@/types";
@@ -10,6 +11,7 @@ interface Props {
 
 const ProfileTemplate = ({ profile }: Props) => {
   const currentUser = useCurrentUser();
+  const navigate = useNavigate();
   const {
     owner,
     created_at,
@@ -41,7 +43,10 @@ const ProfileTemplate = ({ profile }: Props) => {
     >
       {is_owner && (
         <Box position="absolute" top={4} right={4}>
-          <MoreDropdown menuItems={profileMenuItems} width="210px" />
+          <MoreDropdown
+            menuItems={profileMenuItems(navigate, profile.id.toString())}
+            width="210px"
+          />{" "}
         </Box>
       )}
       <VStack gap={3} mb="5">
