@@ -2,8 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
-import { CurrentUserProvider } from "@/contexts/CurrentUserContext";
-import { PostsProvider } from "@/contexts/PostsContext.tsx";
+import {
+  CurrentUserProvider,
+  PostsProvider,
+  ProfileProvider,
+} from "@/contexts";
 import { system } from "@/theme";
 import "@/index.css";
 import App from "@/App.tsx";
@@ -13,9 +16,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <ChakraProvider value={system}>
         <CurrentUserProvider>
-          <PostsProvider>
-            <App />
-          </PostsProvider>
+          <ProfileProvider>
+            <PostsProvider>
+              <App />
+            </PostsProvider>
+          </ProfileProvider>
         </CurrentUserProvider>
       </ChakraProvider>
     </BrowserRouter>

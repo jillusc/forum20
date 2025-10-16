@@ -1,0 +1,91 @@
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import { axiosRes } from "@/api/axiosDefaults";
+import { useFetchProfiles } from "@/hooks/useFetchProfiles";
+import { useCurrentUser } from "./CurrentUserContext";
+import { followHelper, unfollowHelper } from "@/utils/utils";
+import type { Profile } from "@/types";
+
+type ProfileContextType = {
+  profileData: { results: Profile[] };
+  setProfileData: React.Dispatch<React.SetStateAction<Profile[]>>;
+  handleFollow: (clickedProfile: Profile) => Promise<void>;
+  handleUnfollow: (clickedProfile: Profile) => Promise<void>;
+};
+
+export const ProfileContext = createContext<ProfileContextType | null>(null);
+
+export const useProfileData = () => {
+  const context = useContext(ProfileContext);
+  if (!context)
+    throw new Error("useProfileData must be used within ProfileDataProvider");
+  return context.profileData;
+};
+
+export const useSetProfileData = () => {
+  const context = useContext(ProfileContext);
+  if (!context)
+    throw new Error(
+      "useSetProfileData must be used within ProfileDataProvider"
+    );
+  return {
+    setProfileData: context.setProfileData,
+    handleFollow: context.handleFollow,
+    handleUnfollow: context.handleUnfollow,
+  };
+};
+
+export const ProfileProvider = ({ children }: { children: ReactNode }) => {
+  const { topProfiles } = useFetchProfiles(); // fetch profiles
+  const [profileData, setProfileData] = useState<Profile[]>([]);
+  const currentUser = useCurrentUser();
+
+  // populate context when topProfiles changes:
+  useEffect(() => {
+    if (topProfiles.length) setProfileData(topProfiles);
+  }, [topProfiles]);
+
+  const handleFollow = async (clickedProfile: Profile) => {
+    // don't allow following oneself:
+    if (currentUser?.profile_id === clickedProfile.id) return;
+    try {
+      const { data } = await axiosRes.post("/followers/", {
+        followed: clickedProfile.id,
+      });
+      setProfileData((prev) =>
+        prev.map((profile) => followHelper(profile, clickedProfile, data.id))
+      );
+    } catch (err) {
+      console.log("Error following profile:", err);
+    }
+  };
+
+  const handleUnfollow = async (clickedProfile: Profile) => {
+    try {
+      await axiosRes.delete(`/followers/${clickedProfile.following_id}/`);
+      setProfileData((prev) =>
+        prev.map((profile) => unfollowHelper(profile, clickedProfile))
+      );
+    } catch (err) {
+      console.log("Error unfollowing profile:", err);
+    }
+  };
+
+  return (
+    <ProfileContext.Provider
+      value={{
+        profileData: { results: profileData },
+        setProfileData,
+        handleFollow,
+        handleUnfollow,
+      }}
+    >
+      {children}
+    </ProfileContext.Provider>
+  );
+};
