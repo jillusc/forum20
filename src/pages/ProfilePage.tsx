@@ -4,13 +4,19 @@ import { Box, Text } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
 import PostsPage from "@/pages/PostsPage";
 import type { Profile } from "@/types";
+import { useProfileData, useSetProfileData } from "@/contexts/ProfileContext";
 import { ProfileTemplate, TopProfilesBase } from "@/components";
 
 const ProfilePage = () => {
   const { id } = useParams();
+  const { results: profiles } = useProfileData();
+  const { handleFollow, handleUnfollow } = useSetProfileData();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const currentProfile = profiles.find((p) => p.id === profile?.id);
+  const isFollowing = !!currentProfile?.following_id;
 
   useEffect(() => {
     if (!id) return;
@@ -40,7 +46,12 @@ const ProfilePage = () => {
       <Box display={{ base: "block", lg: "none" }}>
         <TopProfilesBase />
       </Box>
-      <ProfileTemplate profile={profile} />
+      <ProfileTemplate
+        profile={profile}
+        isFollowing={isFollowing}
+        handleFollow={() => currentProfile && handleFollow(currentProfile)}
+        handleUnfollow={() => currentProfile && handleUnfollow(currentProfile)}
+      />
       <PostsPage
         filter={`owner__profile=${id}&`}
         message={`${profile.owner} hasn't posted anything yet.`}

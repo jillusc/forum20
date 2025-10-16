@@ -7,9 +7,17 @@ import { profileMenuItems } from "@/data/menuItems";
 
 interface Props {
   profile: Profile;
+  isFollowing: boolean;
+  handleFollow: (profile: Profile) => void;
+  handleUnfollow: (profile: Profile) => void;
 }
 
-const ProfileTemplate = ({ profile }: Props) => {
+const ProfileTemplate = ({
+  profile,
+  isFollowing,
+  handleFollow,
+  handleUnfollow,
+}: Props) => {
   const currentUser = useCurrentUser();
   const navigate = useNavigate();
   const {
@@ -20,7 +28,6 @@ const ProfileTemplate = ({ profile }: Props) => {
     followers_count,
     following_count,
     content,
-    following_id,
   } = profile;
   const is_owner = currentUser?.username === owner;
   const stats = [
@@ -84,7 +91,13 @@ const ProfileTemplate = ({ profile }: Props) => {
 
         {!is_owner && (
           <Box width="100%" display="flex" justifyContent="center">
-            <Button>{following_id ? "Unfollow" : "Follow"}</Button>
+            <Button
+              onClick={() =>
+                isFollowing ? handleUnfollow(profile) : handleFollow(profile)
+              }
+            >
+              {isFollowing ? "Unfollow" : "Follow"}
+            </Button>
           </Box>
         )}
       </VStack>
