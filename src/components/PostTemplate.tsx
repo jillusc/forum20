@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -29,6 +29,7 @@ interface Props {
   postIsEditable?: boolean;
   onEdit?: () => void; // optional because only 1 of the 2 parents needs them
   onDelete?: () => void; // these actions are only for a single Post, so are not relevant in PostsPage!
+  onCommentIconClick?: () => void;
 }
 
 const PostTemplate = ({
@@ -37,6 +38,7 @@ const PostTemplate = ({
   postIsEditable = false,
   onEdit,
   onDelete,
+  onCommentIconClick,
 }: Props) => {
   const [error, setError] = useState("");
   const currentUser = useCurrentUser(); // define current user
@@ -60,6 +62,7 @@ const PostTemplate = ({
   } = post;
   const is_owner = currentUser?.username === owner;
   const isBookmarked = !!bookmark_id; // "if a bookmark_id exists, this means the current user has bookmarked this post, so return true"
+  const navigate = useNavigate();
 
   const handleLikeToggle = async () => {
     try {
@@ -234,9 +237,19 @@ const PostTemplate = ({
             <Text>{likes_count}</Text>
           </HStack>
           <HStack gap={2}>
-            <Link to={`/posts/${id}`}>
+            <Box
+              as="span"
+              cursor="pointer"
+              onClick={() => {
+                if (onCommentIconClick) {
+                  onCommentIconClick(); // used in PostPage
+                } else {
+                  navigate(`/posts/${id}`); // used in PostsPage
+                }
+              }}
+            >
               <FaCommentDots />
-            </Link>
+            </Box>
             <Text>{comments_count}</Text>
           </HStack>
         </HStack>

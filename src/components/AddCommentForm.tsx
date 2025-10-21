@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { HStack, Text, Textarea, VStack } from "@chakra-ui/react";
 import { Button, FormStyles } from "@/components/ui";
 import type { Comment, Post } from "@/types";
@@ -9,18 +8,17 @@ interface Props {
   postId: number;
   setPost: React.Dispatch<React.SetStateAction<Post | null>>;
   setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
+  onCancel?: () => void;
 }
 
-const AddCommentForm = ({ postId, setPost, setComments }: Props) => {
+const AddCommentForm = ({ postId, setPost, setComments, onCancel }: Props) => {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const navigate = useNavigate();
-
   const handleCancel = () => {
+    if (onCancel) onCancel(); // tells the parent to hide the form
     setContent("");
-    navigate(`/posts/${postId}`);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,13 +26,16 @@ const AddCommentForm = ({ postId, setPost, setComments }: Props) => {
     setError(""); // reset previous error
     setLoading(true);
     try {
-      const { data } = await axiosRes.post("/comments/", { content, postId });
+      const { data } = await axiosRes.post("/comments/", {
+        content,
+        post: postId,
+      });
       setComments((prev) => [data, ...prev]);
       setPost((prev) =>
         prev ? { ...prev, comments_count: prev.comments_count + 1 } : prev
       );
       setContent("");
-      navigate(`/posts/${postId}`); // redirect to the post's page
+      if (onCancel) onCancel(); // hides the form after creating
     } catch (err: any) {
       if (err.response?.data) {
         setError(err.response.data); // check for + store backend error data

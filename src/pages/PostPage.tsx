@@ -4,7 +4,7 @@ import { Box, Text, VStack } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
 import { useSetPosts } from "@/contexts/PostsContext";
 import { CommentTemplate, PostTemplate } from "@/components";
-import { EditCommentForm } from "@/components";
+import { AddCommentForm, EditCommentForm } from "@/components";
 import type { Comment, Post } from "@/types";
 
 const PostPage = () => {
@@ -16,6 +16,7 @@ const PostPage = () => {
   const [loading, setLoading] = useState(true); // to track whether the API call is in progress
   const [error, setError] = useState<string | null>(null); // to store any fetch errors
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [showAddCommentForm, setShowAddCommentForm] = useState(false);
 
   const handleEdit = () => {
     navigate(`/posts/${id}/edit`);
@@ -89,7 +90,16 @@ const PostPage = () => {
           postIsEditable={true}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onCommentIconClick={() => setShowAddCommentForm((prev) => !prev)}
         />
+        {showAddCommentForm && (
+          <AddCommentForm
+            postId={post.id}
+            setPost={setPost}
+            setComments={setComments}
+            onCancel={() => setShowAddCommentForm(false)}
+          />
+        )}
       </Box>
       <VStack gap={0}>
         {comments.length ? (
