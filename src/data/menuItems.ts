@@ -27,3 +27,8 @@ export const profileMenuItems = (navigate: any, id: string): MenuItem[] => [
     onClick: () => navigate(`/profiles/${id}/edit/password`),
   },
 ];
+
+export const commentMenuItems = (
+  onEdit: () => void,
+  onDelete: () => void
+): MenuItem[] => postMenuItems(onEdit, onDelete);

@@ -1,15 +1,20 @@
 import { Link } from "react-router-dom";
-import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/react";
-import { Avatar } from "@/components/ui";
+import { Box, HStack, Text, VStack } from "@chakra-ui/react";
+import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { Avatar, MoreDropdown } from "@/components/ui";
+import { commentMenuItems } from "@/data/menuItems";
 import type { Comment } from "@/types";
 
 interface Props {
   comment: Comment;
+  handleEdit: () => void; // just calls parent to trigger editing
+  handleDelete: () => void; // calls parent to delete
 }
-
-const CommentTemplate = ({ comment }: Props) => {
-  // destructure fields we need from comment props:
+const CommentTemplate = ({ comment, handleEdit, handleDelete }: Props) => {
+  // destructure fields we need from Comment props:
   const { owner, profile_id, profile_image, content, updated_at } = comment;
+  const currentUser = useCurrentUser();
+  const isOwner = currentUser?.username === owner;
 
   return (
     <Box
@@ -22,14 +27,27 @@ const CommentTemplate = ({ comment }: Props) => {
       borderColor="primary"
       borderRadius="2xl"
     >
-      <HStack justify="space-between" align="top">
+      <HStack justify="space-between" align="start">
         <Link to={`/profiles/${profile_id}`}>
           <VStack align="center" gap={1}>
             <Avatar src={profile_image || undefined} />
             <Text>{owner}</Text>
           </VStack>
         </Link>
-        <Text>{new Date(updated_at).toLocaleDateString("en-GB")}</Text>
+        <HStack gap={3}>
+          <Text>{new Date(updated_at).toLocaleDateString("en-GB")}</Text>
+          {isOwner && (
+            <Box position="relative">
+              <MoreDropdown
+                menuItems={commentMenuItems(
+                  handleEdit, // now it already has the id from parent
+                  handleDelete
+                )}
+                width="130px"
+              />
+            </Box>
+          )}
+        </HStack>
       </HStack>
       <Box p={4} borderWidth="1px" borderColor="gray.200" borderRadius="2xl">
         <Text>{content}</Text>
