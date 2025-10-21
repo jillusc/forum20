@@ -19,6 +19,7 @@ import {
   FaRegCommentDots,
   FaRegHeart,
 } from "react-icons/fa";
+import { CommentTemplate, EditCommentForm } from "@/components";
 
 const ActivityPage = () => {
   const currentUser = useCurrentUser();
@@ -29,6 +30,14 @@ const ActivityPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("Likes");
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+
+  const handleEditComment = (id: number) => setEditingCommentId(id);
+
+  const handleDeleteComment = async (id: number) => {
+    await axiosRes.delete(`/comments/${id}/`);
+    setComments((prev) => prev.filter((comment) => comment.id !== id));
+  };
 
   // use useEffect to fetch the posts liked, commented on and bookmarked by the user when this component mounts:
   useEffect(() => {
@@ -120,46 +129,66 @@ const ActivityPage = () => {
   );
 
   const renderCommentItem = (item: any) => (
-    <Box key={item.id} p={4}>
-      <VStack gap={3}>
-        <Link to={`/posts/${item.post}`}>
-          {item.post_image && (
-            <Box
-              maxW="200px"
-              mx="auto"
-              overflow="hidden"
-              mt={3}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <img
-                src={item.post_image}
-                alt={item.post_title}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                }}
-              />
-            </Box>
-          )}
-          <Text fontWeight="bold" textAlign="center" my={2}>
-            {item.post_title}
-          </Text>
-        </Link>
+    <Box key={item.id}>
+      <Box p={4} position="relative">
+        <VStack gap={3}>
+          <Link to={`/posts/${item.post}`}>
+            {item.post_image && (
+              <Box
+                maxW="200px"
+                mx="auto"
+                overflow="hidden"
+                mt={3}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <img
+                  src={item.post_image}
+                  alt={item.post_title}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+              </Box>
+            )}
+            <Text fontWeight="bold" textAlign="center" my={2}>
+              {item.post_title}
+            </Text>
+          </Link>
 
-        <Box width="84%" p={4} mx="auto">
-          <Text fontSize="xs">
-            You commented on{" "}
-            {new Date(item.created_at).toLocaleDateString("en-GB")}:
-          </Text>
-          <Box my={2} p={4} borderWidth="1px" borderRadius="2xl">
-            <Text>{item.content}</Text>
+          <Box width="84%">
+            <Box marginLeft={3} mb={3}>
+              <Text fontSize="xs">
+                You commented on{" "}
+                {new Date(item.updated_at).toLocaleDateString("en-GB")}:
+              </Text>
+            </Box>
+
+            <HStack align="center" gap={3}>
+              {/* "when a comment's id matches the state value, show the edit form instead of the usual comment content": */}
+              {editingCommentId === item.id ? (
+                <Box width="100%">
+                  <EditCommentForm
+                    commentId={item.id}
+                    setComments={setComments}
+                    onCancel={() => setEditingCommentId(null)}
+                  />
+                </Box>
+              ) : (
+                <CommentTemplate
+                  comment={item}
+                  handleEdit={() => handleEditComment(item.id)}
+                  handleDelete={() => handleDeleteComment(item.id)}
+                />
+              )}
+            </HStack>
           </Box>
-        </Box>
-      </VStack>
-      <Box as="hr" mt={4} borderColor="gray.200" />
+        </VStack>
+      </Box>
+      <Box as="hr" my={4} borderColor="gray.200" />
     </Box>
   );
 

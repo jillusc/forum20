@@ -4,6 +4,7 @@ import { Box, Text, VStack } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
 import { useSetPosts } from "@/contexts/PostsContext";
 import { CommentTemplate, PostTemplate } from "@/components";
+import { EditCommentForm } from "@/components";
 import type { Comment, Post } from "@/types";
 
 const PostPage = () => {
@@ -14,6 +15,7 @@ const PostPage = () => {
   const [comments, setComments] = useState<Comment[]>([]); // to store the fetched comments
   const [loading, setLoading] = useState(true); // to track whether the API call is in progress
   const [error, setError] = useState<string | null>(null); // to store any fetch errors
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
 
   const handleEdit = () => {
     navigate(`/posts/${id}/edit`);
@@ -22,6 +24,13 @@ const PostPage = () => {
   const handleDelete = async () => {
     await axiosRes.delete(`/posts/${id}/`);
     navigate(-2);
+  };
+
+  const handleEditComment = (id: number) => setEditingCommentId(id);
+
+  const handleDeleteComment = async (id: number) => {
+    await axiosRes.delete(`/comments/${id}/`);
+    setComments((prev) => prev.filter((comment) => comment.id !== id));
   };
 
   // use useEffect to fetch the post and its comments when this component mounts
@@ -84,9 +93,25 @@ const PostPage = () => {
       </Box>
       <VStack gap={0}>
         {comments.length ? (
-          comments.map((comment) => (
-            <CommentTemplate key={comment.id} comment={comment} />
-          ))
+          comments.map((comment) =>
+            editingCommentId === comment.id ? (
+              <Box key={comment.id} mx="auto" borderRadius="2xl">
+                <EditCommentForm
+                  key={comment.id}
+                  commentId={comment.id}
+                  setComments={setComments}
+                  onCancel={() => setEditingCommentId(null)}
+                />
+              </Box>
+            ) : (
+              <CommentTemplate
+                key={comment.id}
+                comment={comment}
+                handleEdit={() => handleEditComment(comment.id)}
+                handleDelete={() => handleDeleteComment(comment.id)}
+              />
+            )
+          )
         ) : (
           <Box maxWidth="768px" width="100%" mx="auto" p={4}>
             <Text textAlign="left">No comments yet</Text>
@@ -99,4 +124,4 @@ const PostPage = () => {
 
 export default PostPage;
 
-// line 10: useParams() allows us to get URL parameters
+// line 11: useParams() allows us to get URL parameters
