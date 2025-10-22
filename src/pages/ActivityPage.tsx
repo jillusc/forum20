@@ -198,7 +198,6 @@ const ActivityPage = () => {
         Recent activity
       </Heading>
       <Box
-        maxWidth="768px"
         width="100%"
         mx="auto"
         my={2}

@@ -82,7 +82,7 @@ const EditProfileForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <FormStyles title="Edit Profile" maxWidth="700px">
+      <FormStyles title="Edit Profile" maxWidth="736px">
         <label htmlFor="image-upload" style={{ cursor: "pointer" }}>
           <Text
             mb={3}

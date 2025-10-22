@@ -38,7 +38,6 @@ const ProfileTemplate = ({
 
   return (
     <Box
-      maxWidth="768px"
       width="100%"
       mx="auto"
       my={10}

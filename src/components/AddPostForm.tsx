@@ -69,7 +69,7 @@ const AddPostForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <FormStyles title="Create Post" maxWidth="700px">
+      <FormStyles title="Create Post" maxWidth="736px">
         <label htmlFor="image-upload" style={{ cursor: "pointer" }}>
           <Text
             mb={3}

@@ -56,13 +56,36 @@ const PostsPage = ({
           <TopProfilesBase />
         </Box>
       )}
-      {posts.map((post) => (
-        <Box key={post.id} mb={10}>
-          <PostTemplate post={post} />
-        </Box>
-      ))}
+      {/* Outer container: sets up a horizontal flex layout for the two columns: */}
+      <Box display="flex" flexDirection={{ base: "column", md: "row" }} gap={4}>
+        {/* Map over [0, 1] to create two columns dynamically */}
+        {[0, 1].map((colIndex) => (
+          <Box
+            key={colIndex}
+            flex="1" // Each column takes equal width
+            display="flex"
+            flexDirection="column" // Stack posts vertically within each column
+            gap={0} // Vertical spacing between posts
+          >
+            {/* Filter posts so that even-indexed posts go in column 0 and odd-indexed posts go in column 1 */}
+            {posts
+              .filter((_, i) => i % 2 === colIndex)
+              .map((post) => (
+                <PostTemplate key={post.id} post={post} />
+              ))}
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 };
 
 export default PostsPage;
+
+// line 72:
+// "For each post in the array, look (only) at its position in the list (i)."
+// "Compute i % 2 (0 = even positions, 1 = odd)."
+// "Keep the post if its index modulo 2 equals the column number (colIndex)."
+// Column 0 keeps posts at indexes 0, 2, 4…
+// Column 1 keeps posts at indexes 1, 3, 5…
+// (N.B. We ignore the post itself (_) because the filter only needs the index to decide which column it goes into.)

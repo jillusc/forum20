@@ -95,7 +95,7 @@ const EditPostForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <FormStyles title="Edit Post" maxWidth={700}>
+      <FormStyles title="Edit Post" maxWidth="736px">
         <label htmlFor="image-upload" style={{ cursor: "pointer" }}>
           <Text
             mb={3}
