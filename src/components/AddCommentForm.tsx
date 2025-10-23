@@ -7,7 +7,9 @@ import { axiosRes } from "@/api/axiosDefaults";
 interface Props {
   postId: number;
   setPost: React.Dispatch<React.SetStateAction<Post | null>>;
-  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
+  setComments: React.Dispatch<
+    React.SetStateAction<{ results: Comment[]; next: string | null }>
+  >;
   onCancel?: () => void;
 }
 
@@ -30,7 +32,10 @@ const AddCommentForm = ({ postId, setPost, setComments, onCancel }: Props) => {
         content,
         post: postId,
       });
-      setComments((prev) => [data, ...prev]);
+      setComments((prev) => ({
+        ...prev, // keep the 'next' URL intact
+        results: [data, ...prev.results], // prepend the new comment
+      }));
       setPost((prev) =>
         prev ? { ...prev, comments_count: prev.comments_count + 1 } : prev
       );

@@ -25,7 +25,13 @@ const ActivityPage = () => {
   const currentUser = useCurrentUser();
   const tabs = ["Likes", "Comments", "Bookmarks"];
   const [likes, setLikes] = useState<Like[]>([]);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<{
+    results: Comment[];
+    next: string | null;
+  }>({
+    results: [],
+    next: null,
+  });
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -36,7 +42,10 @@ const ActivityPage = () => {
 
   const handleDeleteComment = async (id: number) => {
     await axiosRes.delete(`/comments/${id}/`);
-    setComments((prev) => prev.filter((comment) => comment.id !== id));
+    setComments((prev) => ({
+      ...prev,
+      results: prev.results.filter((comment) => comment.id !== id),
+    }));
   };
 
   // use useEffect to fetch the posts liked, commented on and bookmarked by the user when this component mounts:
@@ -55,7 +64,10 @@ const ActivityPage = () => {
         ]);
         // ...and store their data in state:
         setLikes(likesRes.data.results);
-        setComments(commentsRes.data.results);
+        setComments({
+          results: commentsRes.data.results,
+          next: commentsRes.data.next || null,
+        });
         setBookmarks(bookmarksRes.data.results);
       } catch (err) {
         setError("");
@@ -261,10 +273,10 @@ const ActivityPage = () => {
             ))}
 
           {activeTab === "Comments" &&
-            (comments.length === 0 ? (
+            (comments.results.length === 0 ? (
               <Text>No comments to show.</Text>
             ) : (
-              comments.map((comment) => renderCommentItem(comment))
+              comments.results.map((comment) => renderCommentItem(comment))
             ))}
 
           {activeTab === "Bookmarks" &&

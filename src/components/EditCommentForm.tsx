@@ -6,7 +6,9 @@ import type { Comment } from "@/types";
 
 interface Props {
   commentId: number;
-  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
+  setComments: React.Dispatch<
+    React.SetStateAction<{ results: Comment[]; next: string | null }>
+  >;
   onCancel?: () => void; // optional - used in ActivityPage
 }
 
@@ -45,9 +47,11 @@ const EditCommentForm = ({ commentId, setComments, onCancel }: Props) => {
       const { data } = await axiosRes.put(`/comments/${commentId}/`, {
         content,
       });
-      setComments((prev) =>
-        prev.map((comment) => (comment.id === commentId ? data : comment))
-      );
+      setComments((prev) => ({
+        ...prev, // keep the 'next' URL intact
+        // replace existing comment with updated one in the same position:
+        results: prev.results.map((c) => (c.id === data.id ? data : c)), // prepend the new comment
+      }));
       if (onCancel) onCancel(); // hide the form
     } catch (err: any) {
       if (err.response?.data) {

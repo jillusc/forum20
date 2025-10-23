@@ -6,13 +6,21 @@ import { useSetPosts } from "@/contexts/PostsContext";
 import { CommentTemplate, PostTemplate } from "@/components";
 import { AddCommentForm, EditCommentForm } from "@/components";
 import type { Comment, Post } from "@/types";
+import { fetchMoreData } from "@/utils/utils";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>(); // grab the post ID from the URL
   const setPosts = useSetPosts();
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null); // to store post data
-  const [comments, setComments] = useState<Comment[]>([]); // to store the fetched comments
+  const [comments, setComments] = useState<{
+    results: Comment[];
+    next: string | null;
+  }>({
+    results: [],
+    next: null,
+  });
   const [loading, setLoading] = useState(true); // to track whether the API call is in progress
   const [error, setError] = useState<string | null>(null); // to store any fetch errors
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
@@ -31,7 +39,10 @@ const PostPage = () => {
 
   const handleDeleteComment = async (id: number) => {
     await axiosRes.delete(`/comments/${id}/`);
-    setComments((prev) => prev.filter((comment) => comment.id !== id));
+    setComments((prev) => ({
+      ...prev,
+      results: prev.results.filter((comment) => comment.id !== id),
+    }));
   };
 
   // use useEffect to fetch the post and its comments when this component mounts
@@ -48,7 +59,10 @@ const PostPage = () => {
         ]);
         // ...and store their data in state:
         setPost(postRes.data);
-        setComments(commentsRes.data.results);
+        setComments({
+          results: commentsRes.data.results,
+          next: commentsRes.data.next,
+        });
         // ALSO update the (global) posts context:
         setPosts((prevPosts) => {
           // check if the post is already in context state:
@@ -109,32 +123,44 @@ const PostPage = () => {
           />
         )}
       </Box>
-      <VStack gap={0}>
-        {comments.length ? (
-          comments.map((comment) =>
-            editingCommentId === comment.id ? (
-              <Box key={comment.id} mx="auto" borderRadius="2xl">
-                <EditCommentForm
+      <VStack gap={0} mx="auto" align="stretch" p={4}>
+        <InfiniteScroll
+          dataLength={comments.results.length} // how many posts are currently loaded
+          next={() => fetchMoreData(comments, setComments)} // function to fetch the next page
+          hasMore={!!comments.next}
+          // true if there's a next page
+          loader={
+            <Text my={6} textAlign="center">
+              Loading more comments...
+            </Text>
+          }
+        >
+          {comments.results.length ? (
+            comments.results.map((comment) =>
+              editingCommentId === comment.id ? (
+                <Box key={comment.id} mx="auto" borderRadius="2xl">
+                  <EditCommentForm
+                    key={comment.id}
+                    commentId={comment.id}
+                    setComments={setComments}
+                    onCancel={() => setEditingCommentId(null)}
+                  />
+                </Box>
+              ) : (
+                <CommentTemplate
                   key={comment.id}
-                  commentId={comment.id}
-                  setComments={setComments}
-                  onCancel={() => setEditingCommentId(null)}
+                  comment={comment}
+                  handleEdit={() => handleEditComment(comment.id)}
+                  handleDelete={() => handleDeleteComment(comment.id)}
                 />
-              </Box>
-            ) : (
-              <CommentTemplate
-                key={comment.id}
-                comment={comment}
-                handleEdit={() => handleEditComment(comment.id)}
-                handleDelete={() => handleDeleteComment(comment.id)}
-              />
+              )
             )
-          )
-        ) : (
-          <Box maxWidth="768px" width="100%" mx="auto" p={4}>
-            <Text textAlign="left">No comments yet</Text>
-          </Box>
-        )}
+          ) : (
+            <Box maxWidth="768px" width="100%" mx="auto" p={4}>
+              <Text textAlign="left">No comments yet</Text>
+            </Box>
+          )}
+        </InfiniteScroll>
       </VStack>
     </>
   );
@@ -142,4 +168,4 @@ const PostPage = () => {
 
 export default PostPage;
 
-// line 11: useParams() allows us to get URL parameters
+// line 13: useParams() allows us to get URL parameters
