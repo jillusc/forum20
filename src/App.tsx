@@ -6,6 +6,7 @@ import {
   ActivityPage,
   FeedPage,
   HomePage,
+  PageNotFound,
   PostPage,
   ProfilePage,
 } from "@/pages";
@@ -71,9 +72,7 @@ function App() {
           />
           <Route path="/profiles/:id/edit" element={<EditProfileForm />} />
           <Route path="/profiles/:id" element={<ProfilePage />} />
-          {/* // catch-all route
-            <Route path="*" element={<NotFound />} />
-            */}
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </GridItem>
 
