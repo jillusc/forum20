@@ -68,8 +68,9 @@ const PostTemplate = ({
     try {
       const { status, data } = await axiosRes.post("/likes/", { post: id });
       // 1. update the global posts list (i.e. PostsPage):
-      setPosts((prevPosts) =>
-        prevPosts.map((post) => {
+      setPosts((prevPosts) => ({
+        ...prevPosts,
+        results: prevPosts.results.map((post) => {
           if (post.id !== id) return post;
           // backend returns 204 if the like was removed, or data if created:
           if (status === 204 || data.detail === "unliked") {
@@ -77,8 +78,8 @@ const PostTemplate = ({
           } else {
             return { ...post, likes_count: likes_count + 1, like_id: data.id };
           }
-        })
-      );
+        }),
+      }));
       // 2. update the local post if setPost is passed (i.e. from PostPage)
       setPost?.((prev) =>
         prev && prev.id === id
@@ -106,8 +107,9 @@ const PostTemplate = ({
     try {
       const { status, data } = await axiosRes.post("/bookmarks/", { post: id });
       // 1. update the global posts list (i.e. PostsPage):
-      setPosts((prevPosts) =>
-        prevPosts.map((post) => {
+      setPosts((prevPosts) => ({
+        ...prevPosts,
+        results: prevPosts.results.map((post) => {
           if (post.id !== id) return post;
           // backend returns 204 if the bookmark was removed, or data if created:
           if (status === 204 || data.detail === "bookmark removed") {
@@ -115,8 +117,8 @@ const PostTemplate = ({
           } else {
             return { ...post, bookmark_id: data.id };
           }
-        })
-      );
+        }),
+      }));
       // 2. update the local post if setPost is passed (i.e. from PostPage)
       setPost?.((prev) =>
         prev && prev.id === id
@@ -270,6 +272,5 @@ const PostTemplate = ({
 
 export default PostTemplate;
 
-// line 27: add this because the MoreDropdown shall not be visible on every view
-// line 59: bookmark_id in the post props is only set for the currently logged-in user,
+// line 62: bookmark_id in the post props is only set for the currently logged-in user,
 // so checking !!bookmark_id lets the frontend know whether that user has already bookmarked this post

@@ -52,15 +52,23 @@ const PostPage = () => {
         // ALSO update the (global) posts context:
         setPosts((prevPosts) => {
           // check if the post is already in context state:
-          const exists = prevPosts.some((post) => post.id === postRes.data.id);
+          const exists = prevPosts.results.some(
+            (post) => post.id === postRes.data.id
+          );
           // if it does exist, update the existing post with new data:
           if (exists) {
-            return prevPosts.map((post) =>
-              post.id === postRes.data.id ? postRes.data : post
-            );
+            return {
+              ...prevPosts,
+              results: prevPosts.results.map((post) =>
+                post.id === postRes.data.id ? postRes.data : post
+              ),
+            };
           }
           // and add the new post to the list:
-          return [...prevPosts, postRes.data];
+          return {
+            ...prevPosts,
+            results: [...prevPosts.results, postRes.data],
+          };
         });
       } catch (err: any) {
         if (err.response?.data) {

@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { Post } from "@/types";
 
-// type for the context value (posts + setter)
+// type for the context value: posts object (with results array and next page URL + setter)
 type PostsContextType = {
-  posts: Post[]; // array of posts
-  setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
+  posts: { results: Post[]; next: string | null };
+  setPosts: React.Dispatch<
+    React.SetStateAction<{ results: Post[]; next: string | null }>
+  >;
 };
 
 // context to hold the posts + setter (uses type as above):
@@ -12,7 +14,10 @@ export const PostsContext = createContext<PostsContextType | null>(null);
 
 // Provider component creates/defines state:
 export const PostsProvider = ({ children }: { children: ReactNode }) => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<{ results: Post[]; next: string | null }>({
+    results: [],
+    next: "/api/posts/?page=1", // initial page URL
+  });
 
   return (
     <PostsContext.Provider value={{ posts, setPosts }}>
