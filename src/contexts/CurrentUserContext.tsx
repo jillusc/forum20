@@ -14,6 +14,7 @@ import type { User } from "@/types";
 type CurrentUserContextType = {
   currentUser: User | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
+  CULoading: boolean;
 };
 
 // context to hold the currentUser + setter (uses type as above):
@@ -44,6 +45,7 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
           setError("");
           console.error(err);
           setCurrentUser(null);
+          setLoading(false); // stop loading before redirect
           navigate("/login"); // redirect if token invalid/unmount the provider
         } finally {
           setLoading(false); // always run after try/catch
@@ -138,7 +140,9 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
 
   // provide currentUser and setter to all children components:
   return (
-    <CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
+    <CurrentUserContext.Provider
+      value={{ currentUser, setCurrentUser, CULoading: loading }}
+    >
       {children}
     </CurrentUserContext.Provider>
   );
@@ -159,6 +163,14 @@ export function useSetCurrentUser() {
       "useSetCurrentUser must be used within a CurrentUserProvider"
     );
   return context.setCurrentUser; // returns only the setter
+}
+export function useCurrentUserLoading() {
+  const context = useContext(CurrentUserContext);
+  if (!context)
+    throw new Error(
+      "useCurrentUserLoading must be used within a CurrentUserProvider"
+    );
+  return context.CULoading;
 }
 
 // lines 20 - 22: create the (empty) context object and export

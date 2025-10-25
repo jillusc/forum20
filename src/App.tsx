@@ -22,6 +22,7 @@ import {
   LogInForm,
   SignUpForm,
 } from "@/components/auth";
+import { RouteWrapper } from "./components/routes/RoutesWrapper";
 
 function App() {
   const currentUser = useCurrentUser();
@@ -59,19 +60,88 @@ function App() {
       <GridItem area="main">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/feed" element={<FeedPage />} />
-          <Route path="/activity" element={<ActivityPage />} />
-          <Route path="/login" element={<LogInForm />} />
-          <Route path="/signup" element={<SignUpForm />} />
-          <Route path="/posts/create" element={<AddPostForm />} />
-          <Route path="/posts/:id/edit" element={<EditPostForm />} />
-          <Route path="/posts/:id" element={<PostPage />} />
+          <Route
+            path="/feed"
+            element={
+              <RouteWrapper authOnly>
+                <FeedPage />
+              </RouteWrapper>
+            }
+          />
+          <Route
+            path="/activity"
+            element={
+              <RouteWrapper authOnly>
+                <ActivityPage />
+              </RouteWrapper>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <RouteWrapper guestOnly>
+                <LogInForm />
+              </RouteWrapper>
+            }
+          ></Route>
+          <Route
+            path="/signup"
+            element={
+              <RouteWrapper guestOnly>
+                <SignUpForm />
+              </RouteWrapper>
+            }
+          ></Route>
+          <Route
+            path="/posts/create"
+            element={
+              <RouteWrapper authOnly>
+                <AddPostForm />
+              </RouteWrapper>
+            }
+          ></Route>
+          <Route
+            path="/posts/:id/edit"
+            element={
+              <RouteWrapper authOnly>
+                <EditPostForm />
+              </RouteWrapper>
+            }
+          ></Route>
+          <Route
+            path="/posts/:id"
+            element={
+              <RouteWrapper authOnly>
+                <PostPage />
+              </RouteWrapper>
+            }
+          ></Route>
+
           <Route
             path="/profiles/:id/edit/password"
-            element={<ChangePasswordForm />}
-          />
-          <Route path="/profiles/:id/edit" element={<EditProfileForm />} />
-          <Route path="/profiles/:id" element={<ProfilePage />} />
+            element={
+              <RouteWrapper authOnly>
+                <ChangePasswordForm />
+              </RouteWrapper>
+            }
+          ></Route>
+
+          <Route
+            path="/profiles/:id/edit"
+            element={
+              <RouteWrapper authOnly>
+                <EditProfileForm />
+              </RouteWrapper>
+            }
+          ></Route>
+          <Route
+            path="/profiles/:id"
+            element={
+              <RouteWrapper authOnly>
+                <ProfilePage />
+              </RouteWrapper>
+            }
+          ></Route>
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </GridItem>
