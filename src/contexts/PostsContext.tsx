@@ -7,6 +7,8 @@ type PostsContextType = {
   setPosts: React.Dispatch<
     React.SetStateAction<{ results: Post[]; next: string | null }>
   >;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 // context to hold the posts + setter (uses type as above):
@@ -18,9 +20,10 @@ export const PostsProvider = ({ children }: { children: ReactNode }) => {
     results: [],
     next: "/api/posts/?page=1", // initial page URL
   });
+  const [loading, setLoading] = useState(true);
 
   return (
-    <PostsContext.Provider value={{ posts, setPosts }}>
+    <PostsContext.Provider value={{ posts, setPosts, loading, setLoading }}>
       {children}
     </PostsContext.Provider>
   );
@@ -39,4 +42,18 @@ export const useSetPosts = () => {
   if (!context)
     throw new Error("useSetPosts must be used within a PostsProvider");
   return context.setPosts;
+};
+
+export const usePostsLoading = () => {
+  const context = useContext(PostsContext);
+  if (!context)
+    throw new Error("usePostsLoading must be used within a PostsProvider");
+  return context.loading;
+};
+
+export const useSetPostsLoading = () => {
+  const context = useContext(PostsContext);
+  if (!context)
+    throw new Error("useSetPostsLoading must be used within a PostsProvider");
+  return context.setLoading;
 };

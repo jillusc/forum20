@@ -2,17 +2,15 @@ import { useState } from "react";
 import { Box, Heading, HStack, Text } from "@chakra-ui/react";
 import PostsPage from "@/pages/PostsPage";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
-import { usePosts } from "@/contexts/PostsContext";
+import { usePostsLoading } from "@/contexts/PostsContext";
 import { SearchBar, TextLink } from "@/components/ui";
-import HomePageSkeletons from "./HomePageSkeleton";
 import { TopProfilesBase } from "@/components";
+import HomePageSkeletons from "./HomePageSkeleton";
 
 const HomePage = () => {
   const currentUser = useCurrentUser();
   const [searchTerm, setSearchTerm] = useState(""); // store what the user typed in the search bar
-  const posts = usePosts(); // read posts from context
-
-  const isLoading = posts.results.length === 0; // still loading if results empty
+  const loading = usePostsLoading();
 
   return (
     <Box>
@@ -47,7 +45,7 @@ const HomePage = () => {
           </Box>
         )}
       </Box>
-      {isLoading && <HomePageSkeletons />}
+      {loading && <HomePageSkeletons />}
       <PostsPage searchTerm={searchTerm} />
     </Box>
   );

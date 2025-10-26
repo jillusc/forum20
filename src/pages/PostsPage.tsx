@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Box, Text } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
-import { usePosts, useSetPosts } from "@/contexts/PostsContext";
+import {
+  usePosts,
+  usePostsLoading,
+  useSetPosts,
+  useSetPostsLoading,
+} from "@/contexts/PostsContext";
 import { PostTemplate } from "@/components";
 import { fetchMoreData } from "@/utils/utils";
 
@@ -19,18 +24,21 @@ const PostsPage = ({
 }: Props) => {
   const posts = usePosts();
   const setPosts = useSetPosts();
-  const [loading, setLoading] = useState(true);
+  const loading = usePostsLoading();
+  const setLoading = useSetPostsLoading();
   const [error, setError] = useState<string | null>(null);
 
   // use useEffect to fetch posts when this component mounts:
   useEffect(() => {
     const fetchPosts = async () => {
+      setLoading(true);
       try {
         // await the response and destructure data:
         const { data } = await axiosRes.get(
           `/posts/?${filter}&search=${searchTerm}`
         );
-        setPosts(data.results); // take the response and store its data in state
+        // take the response and store its data in state:
+        setPosts({ results: data.results, next: data.next });
       } catch (err) {
         setError("");
         console.error(err);
@@ -40,7 +48,7 @@ const PostsPage = ({
     };
 
     fetchPosts(); // call the async function
-  }, [filter, searchTerm]); // if the filter or searchTerm value changes, re-render (= re-fetch)
+  }, [filter, searchTerm, setPosts, setLoading]);
 
   // Provide fallback UI while data is loading, handle fetch errors,
   // and prevent crashes if required data is missing:
@@ -101,7 +109,7 @@ const PostsPage = ({
 
 export default PostsPage;
 
-// line 90:
+// line 98:
 // "For each post in the array, look (only) at its position in the list (i)."
 // "Compute i % 2 (0 = even positions, 1 = odd)."
 // "Keep the post if its index modulo 2 equals the column number (colIndex)."
