@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Box, Separator, Flex, Image, Text, Icon } from "@chakra-ui/react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { NavItems } from "@/components";
@@ -18,7 +18,17 @@ const NavBar = () => {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const toggleMenu = () => setIsBurgerOpen(!isBurgerOpen);
 
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    if (location.pathname === "/") {
+      // already on Home, force reload
+      navigate(0);
+    } else {
+      navigate("/");
+    }
+  };
 
   // add dynamic path for Profile so the icon links:
   const itemsToRender = userLoggedIn
@@ -57,6 +67,35 @@ const NavBar = () => {
         </Flex>
       );
     }
+
+    if (item.label === "Home") {
+      return (
+        <Flex
+          key={item.label}
+          align="center"
+          gap={2}
+          cursor="pointer"
+          onClick={() => {
+            handleHomeClick();
+            if (onClick) onClick();
+          }}
+        >
+          <Icon
+            as={item.icon}
+            boxSize={location.pathname === "/" ? item.size + 1 : item.size}
+            color={location.pathname === "/" ? "secondary" : "text"}
+          />
+          <Text
+            color={location.pathname === "/" ? "secondary" : "text"}
+            fontSize={location.pathname === "/" ? "lg" : "md"}
+            fontWeight={location.pathname === "/" ? "bold" : "normal"}
+          >
+            {item.label}
+          </Text>
+        </Flex>
+      );
+    }
+
     // otherwise, all other nav items:
     return (
       <NavLink key={item.label} to={item.path!} onClick={onClick}>
