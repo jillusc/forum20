@@ -8,6 +8,7 @@ import { AddCommentForm, EditCommentForm } from "@/components";
 import type { Comment, Post } from "@/types";
 import { fetchMoreData } from "@/utils/utils";
 import InfiniteScroll from "react-infinite-scroll-component";
+import PostPageSkeleton from "./PostPageSkeleton";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>(); // grab the post ID from the URL
@@ -99,7 +100,7 @@ const PostPage = () => {
 
   // Provide fallback UI while data is loading, handle fetch errors,
   // and prevent crashes if required data is missing:
-  if (loading) return <Text>Loading…</Text>;
+  if (loading) return <PostPageSkeleton />;
   if (error) return <Text>{error}</Text>;
   if (!post) return <Text>Content not found</Text>;
 

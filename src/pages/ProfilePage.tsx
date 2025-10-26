@@ -7,6 +7,7 @@ import type { Profile } from "@/types";
 import { useProfileData, useSetProfileData } from "@/contexts/ProfileContext";
 import { ProfileTemplate, TopProfilesBase } from "@/components";
 import { SearchBar } from "@/components/ui";
+import ProfilePageSkeletons from "./ProfilePageSkeleton";
 
 const ProfilePage = () => {
   const { id } = useParams();
@@ -39,7 +40,7 @@ const ProfilePage = () => {
 
   // Provide fallback UI while data is loading, handle fetch errors,
   // and prevent crashes if required data is missing:
-  if (loading) return <Text>Loading…</Text>;
+  if (loading) return <ProfilePageSkeletons />;
   if (error) return <Text>{error}</Text>;
   if (!profile) return <Text>Profile not found</Text>;
 
