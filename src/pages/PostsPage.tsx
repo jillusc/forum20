@@ -3,28 +3,24 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Box, Text } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
 import { usePosts, useSetPosts } from "@/contexts/PostsContext";
-import { useCurrentUser } from "@/contexts/CurrentUserContext";
-import { TopProfilesBase, PostTemplate } from "@/components";
-import { SearchBar } from "@/components/ui";
+import { PostTemplate } from "@/components";
 import { fetchMoreData } from "@/utils/utils";
 
 interface Props {
   filter?: string; // takes an optional filter (for diff. versions of this page)
   message?: string; // text to show if no posts found
-  showExtras?: boolean; // new prop
+  searchTerm?: string; // passed down from parent
 }
 
 const PostsPage = ({
   filter = "",
-  message = "No posts found.",
-  showExtras = true,
+  message = "No posts match your search.",
+  searchTerm = "",
 }: Props) => {
   const posts = usePosts();
   const setPosts = useSetPosts();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState(""); // store what the user typed in the search bar
-  const currentUser = useCurrentUser();
 
   // use useEffect to fetch posts when this component mounts:
   useEffect(() => {
@@ -59,21 +55,15 @@ const PostsPage = ({
 
   return (
     <Box>
-      {showExtras && <SearchBar onSearch={(text) => setSearchTerm(text)} />}
-      {showExtras && currentUser && (
-        <Box display={{ base: "block", lg: "none" }}>
-          <TopProfilesBase />
-        </Box>
-      )}
       <InfiniteScroll
         dataLength={posts.results.length} // how many posts are currently loaded
         next={() => fetchMoreData(posts, setPosts)} // function to fetch the next page
-        hasMore={!!posts.next} // true if there's a next page
+        hasMore={!!posts.next} // true if there’s a next page
         loader={
           <Text my={6} textAlign="center">
             Loading more posts...
           </Text>
-        }
+        } // show while loading
         endMessage={
           <Text my={6} textAlign="center">
             You have reached the end...
@@ -90,10 +80,10 @@ const PostsPage = ({
           {[0, 1].map((colIndex) => (
             <Box
               key={colIndex}
-              flex="1" // each column takes equal width
+              flex="1" // Each column takes equal width
               display="flex"
-              flexDirection="column" // stack posts vertically within each column
-              gap={0} // vertical spacing between posts
+              flexDirection="column" // Stack posts vertically within each column
+              gap={0} // Vertical spacing between posts
             >
               {/* Filter the posts object's results array so that even-indexed posts go in column 0 and odd-indexed posts go in column 1 */}
               {posts.results
@@ -111,7 +101,7 @@ const PostsPage = ({
 
 export default PostsPage;
 
-// line 100:
+// line 90:
 // "For each post in the array, look (only) at its position in the list (i)."
 // "Compute i % 2 (0 = even positions, 1 = odd)."
 // "Keep the post if its index modulo 2 equals the column number (colIndex)."

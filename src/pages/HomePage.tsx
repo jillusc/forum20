@@ -1,11 +1,12 @@
+import { useState } from "react";
 import { Box, Heading, HStack, Text } from "@chakra-ui/react";
 import PostsPage from "@/pages/PostsPage";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
-import { TextLink } from "@/components/ui";
+import { SearchBar, TextLink } from "@/components/ui";
 
 const HomePage = () => {
   const currentUser = useCurrentUser();
-
+  const [searchTerm, setSearchTerm] = useState(""); // store what the user typed in the search bar
   return (
     <Box>
       <Box textAlign="center" mb={5}>
@@ -22,16 +23,19 @@ const HomePage = () => {
             </TextLink>
           </Box>
         ) : (
-          <HStack justify="center" align="baseline" gap={2} mb={5}>
-            <Heading as="h1" size="3xl">
-              forum20
-            </Heading>
-            <Text fontSize="2xl">latest posts</Text>
-          </HStack>
+          <>
+            <SearchBar onSearch={setSearchTerm} />
+            <HStack justify="center" align="baseline" gap={2} mb={5}>
+              <Heading as="h1" size="3xl">
+                forum20
+              </Heading>
+              <Text fontSize="2xl">latest posts</Text>
+            </HStack>
+          </>
         )}
       </Box>
 
-      <PostsPage message={"No posts found."} />
+      <PostsPage searchTerm={searchTerm} />
     </Box>
   );
 };

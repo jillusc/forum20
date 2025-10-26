@@ -6,6 +6,7 @@ import PostsPage from "@/pages/PostsPage";
 import type { Profile } from "@/types";
 import { useProfileData, useSetProfileData } from "@/contexts/ProfileContext";
 import { ProfileTemplate, TopProfilesBase } from "@/components";
+import { SearchBar } from "@/components/ui";
 
 const ProfilePage = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState(""); // store what the user typed in the search bar
 
   const currentProfile = profiles.find((p) => p.id === profile?.id);
   const isFollowing = !!currentProfile?.following_id;
@@ -33,7 +35,7 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-  }, [id]);
+  }, [id, searchTerm]);
 
   // Provide fallback UI while data is loading, handle fetch errors,
   // and prevent crashes if required data is missing:
@@ -43,6 +45,7 @@ const ProfilePage = () => {
 
   return (
     <>
+      <SearchBar onSearch={setSearchTerm} />
       <Box display={{ base: "block", lg: "none" }}>
         <TopProfilesBase />
       </Box>
@@ -52,11 +55,7 @@ const ProfilePage = () => {
         handleFollow={() => currentProfile && handleFollow(currentProfile)}
         handleUnfollow={() => currentProfile && handleUnfollow(currentProfile)}
       />
-      <PostsPage
-        filter={`owner__profile=${id}&`}
-        message={`${profile.owner} hasn't posted anything yet.`}
-        showExtras={false} // hide search bar and TopProfiles
-      />
+      <PostsPage filter={`owner__profile=${id}&`} searchTerm={searchTerm} />
     </>
   );
 };
