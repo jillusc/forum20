@@ -20,6 +20,7 @@ import {
   FaRegHeart,
 } from "react-icons/fa";
 import { CommentTemplate, EditCommentForm } from "@/components";
+import axios from "axios";
 
 const ActivityPage = () => {
   const currentUser = useCurrentUser();
@@ -34,18 +35,27 @@ const ActivityPage = () => {
   });
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("Likes");
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
 
   const handleEditComment = (id: number) => setEditingCommentId(id);
 
   const handleDeleteComment = async (id: number) => {
-    await axiosRes.delete(`/comments/${id}/`);
-    setComments((prev) => ({
-      ...prev,
-      results: prev.results.filter((comment) => comment.id !== id),
-    }));
+    try {
+      await axiosRes.delete(`/comments/${id}/`);
+      setComments((prev) => ({
+        ...prev,
+        results: prev.results.filter((comment) => comment.id !== id),
+      }));
+    } catch (err: unknown) {
+      // TS type guard - safely confirms this is an Axios error:
+      if (axios.isAxiosError(err)) {
+        setError("Couldn't delete comment. Please try again.");
+      } else {
+        setError("Something went wrong.");
+      }
+    }
   };
 
   // use useEffect to fetch the posts liked, commented on and bookmarked by the user when this component mounts:

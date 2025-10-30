@@ -17,7 +17,7 @@ const SearchBar = ({
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
-        if (inputRef.current) inputRef.current.value = ""; // clear input on click-away
+        if (inputRef.current) inputRef.current.value = ""; // clear user input safely on click-away
       }
     };
 
@@ -30,7 +30,8 @@ const SearchBar = ({
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          if (inputRef.current) onSearch(inputRef.current.value); // make sure the input exists
+          // only call onSearch if the input exists:
+          if (inputRef.current) onSearch(inputRef.current.value);
         }}
       >
         <InputGroup>

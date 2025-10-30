@@ -93,4 +93,5 @@ export interface Errors {
   artist_name?: string;
   year_of_artwork?: string;
   owner?: string;
+  non_field_errors?: string;
 }

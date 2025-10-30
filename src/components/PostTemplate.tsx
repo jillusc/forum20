@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -41,7 +40,6 @@ const PostTemplate = ({
   onDelete,
   onCommentIconClick,
 }: Props) => {
-  const [error, setError] = useState("");
   const currentUser = useCurrentUser(); // define current user
   const setPosts = useSetPosts();
   const navigate = useNavigate();
@@ -98,12 +96,8 @@ const PostTemplate = ({
             }
           : prev
       );
-    } catch (err: any) {
-      if (err.response?.data) {
-        setError(err.response.data); // check for + store backend error data
-      } else {
-        console.error(err); // log unexpected errors
-      }
+    } catch (err) {
+      console.error("Error toggling like:", err);
     }
   };
 
@@ -136,7 +130,7 @@ const PostTemplate = ({
           : prev
       );
     } catch (err) {
-      console.log(err);
+      console.error("Error toggling bookmark:", err);
     }
   };
 
@@ -278,5 +272,5 @@ const PostTemplate = ({
 
 export default PostTemplate;
 
-// line 68: bookmark_id in the post props is only set for the currently logged-in user,
+// line 67: bookmark_id in the post props is only set for the currently logged-in user,
 // so checking !!bookmark_id lets the frontend know whether that user has already bookmarked this post

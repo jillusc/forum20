@@ -5,20 +5,25 @@ import { Button, FormField, FormStyles } from "@/components/ui";
 import placeholderImage from "@/assets/post_image_placeholder.jpg";
 import type { Errors } from "@/types";
 import { axiosRes } from "@/api/axiosDefaults";
+import axios from "axios";
 
 const EditProfileForm = () => {
   const { id } = useParams();
   if (!id) return <Text>Invalid profile ID</Text>;
-  const navigate = useNavigate();
 
+  // controlled inputs:
   const [avatar, setAvatar] = useState<File | null>(null);
-  const [username, setUsername] = useState("");
-  const [bioText, setBioText] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [bioText, setBioText] = useState<string | null>(null);
   const [previewURL, setPreviewURL] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Errors>({});
 
+  const navigate = useNavigate();
+
   const handleCancel = () => {
+    // reset all user input safely:
     setAvatar(null);
     setUsername("");
     setBioText("");
@@ -35,7 +40,7 @@ const EditProfileForm = () => {
         setPreviewURL(data.image || null); // show current avatar
         // (avatar remains null until user selects a new file)
         setUsername(data.owner);
-        setBioText(data.content || "");
+        setBioText(data.content || null);
       } catch (err) {
         setErrors({});
         console.error(err);
@@ -49,22 +54,57 @@ const EditProfileForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors({});
+    setErrors({}); // reset any previous errors before submit
+
+    // required field validation:
+    if (!username.trim()) {
+      setErrors({ owner: "Username cannot be empty." });
+      return;
+    }
     setLoading(true);
 
+    // safely prepare formData for submission:
     const formData = new FormData();
     if (avatar) formData.append("image", avatar); // only send a new file if selected
     formData.append("owner", username);
-    formData.append("content", bioText);
+    formData.append("content", bioText ?? "");
 
     try {
       const { data } = await axiosRes.put(`/profiles/${id}/`, formData);
       navigate(`/profiles/${id}`);
-    } catch (err: any) {
-      if (err.response?.data) {
-        setErrors(err.response.data); // check and store backend errors
+    } catch (err: unknown) {
+      // TS type guard - safely confirms this is an Axios error:
+      if (axios.isAxiosError(err)) {
+        const data = err.response?.data; // safely access the backend's reponse (if any)
+        if (!data) {
+          console.error("Network or connection error:", err);
+          setErrors({ non_field_errors: "Network error — please try again." });
+          return;
+        }
+        console.error("Backend error:", data); // log the raw data for debugging
+        if (typeof data === "string") {
+          setErrors({ non_field_errors: data });
+        } else {
+          // convert backend field arrays into single strings:
+          const formattedErrors = Object.fromEntries(
+            Object.entries(data).map(([key, value]) => [
+              key,
+              Array.isArray(value) ? value[0] : String(value),
+            ])
+          );
+          setErrors({
+            ...formattedErrors,
+            non_field_errors:
+              formattedErrors.non_field_errors ||
+              data.detail ||
+              "Couldn't update your profile. Please try again.",
+          });
+        }
       } else {
-        console.error(err);
+        console.error("Unexpected error:", err); // log all other errors
+        setErrors({
+          non_field_errors: "Error updating profile — something went wrong.",
+        });
       }
     } finally {
       setLoading(false);
@@ -83,6 +123,11 @@ const EditProfileForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <FormStyles title="Edit Profile" maxWidth="736px">
+        {errors.non_field_errors && (
+          <Text color="red" textAlign="center" mb={3}>
+            {errors.non_field_errors}
+          </Text>
+        )}
         <label htmlFor="image-upload" style={{ cursor: "pointer" }}>
           <Text
             mb={3}
@@ -114,13 +159,14 @@ const EditProfileForm = () => {
             display="none"
             accept="image/*"
             onChange={(e) => {
+              // controlled file input:
               const file = e.target.files?.[0] ?? null; // store the chosen file
               if (file) {
                 setAvatar(file); // save image/file in state
                 setPreviewURL(URL.createObjectURL(file)); // create new preview and save it in state
               } else {
                 setAvatar(null);
-                setPreviewURL(previewURL || null);
+                setPreviewURL(previewURL || null); // fallback to the original
               }
             }}
           />
@@ -138,7 +184,7 @@ const EditProfileForm = () => {
         <FormField label={<label htmlFor="bioText">Bio</label>}>
           <Textarea
             id="bioText"
-            value={bioText}
+            value={bioText ?? ""}
             onChange={(e) => setBioText(e.target.value)}
             placeholder="Tell f20 about yourself..."
             rows={3}

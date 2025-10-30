@@ -9,6 +9,7 @@ import type { Comment, Post } from "@/types";
 import { fetchMoreData } from "@/utils/utils";
 import InfiniteScroll from "react-infinite-scroll-component";
 import PostPageSkeleton from "./PostPageSkeleton";
+import axios from "axios";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>(); // grab the post ID from the URL
@@ -26,24 +27,58 @@ const PostPage = () => {
   const [error, setError] = useState<string | null>(null); // to store any fetch errors
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [showAddCommentForm, setShowAddCommentForm] = useState(false);
+  const [deletingPost, setDeletingPost] = useState(false);
 
   const handleEdit = () => {
     navigate(`/posts/${id}/edit`);
   };
 
   const handleDelete = async () => {
-    await axiosRes.delete(`/posts/${id}/`);
-    navigate(-2);
+    setDeletingPost(true);
+    try {
+      await axiosRes.delete(`/posts/${id}/`);
+      navigate(-2);
+    } catch (err: unknown) {
+      // TS type guard - safely confirms this is an Axios error:
+      if (axios.isAxiosError(err)) {
+        const data = err.response?.data; // safely access the backend's reponse (if any)
+        if (!data) {
+          console.error("Network or connection error:", err);
+          setError("Network error — please try again.");
+          return;
+        }
+        console.error("Backend error:", data); // log the raw data for debugging
+        setError(
+          typeof data === "string"
+            ? data
+            : data.detail ?? "Could not delete this post. Please try again."
+        );
+      } else {
+        console.error("Unexpected error:", err); // log all other errors
+        setError("Something went wrong.");
+      }
+    } finally {
+      setDeletingPost(false);
+    }
   };
 
   const handleEditComment = (id: number) => setEditingCommentId(id);
 
   const handleDeleteComment = async (id: number) => {
-    await axiosRes.delete(`/comments/${id}/`);
-    setComments((prev) => ({
-      ...prev,
-      results: prev.results.filter((comment) => comment.id !== id),
-    }));
+    try {
+      await axiosRes.delete(`/comments/${id}/`);
+      setComments((prev) => ({
+        ...prev,
+        results: prev.results.filter((comment) => comment.id !== id),
+      }));
+    } catch (err: unknown) {
+      // TS type guard - safely confirms this is an Axios error:
+      if (axios.isAxiosError(err)) {
+        setError("Couldn't delete comment. Please try again.");
+      } else {
+        setError("Something went wrong.");
+      }
+    }
   };
 
   // use useEffect to fetch the post and its comments when this component mounts

@@ -61,7 +61,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         prev.map((profile) => followHelper(profile, clickedProfile, data.id))
       );
     } catch (err) {
-      console.log("Error following profile:", err);
+      console.error("Error following profile:", err);
     }
   };
 
@@ -73,7 +73,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         prev.map((profile) => unfollowHelper(profile, clickedProfile))
       );
     } catch (err) {
-      console.log("Error unfollowing profile:", err);
+      console.error("Error unfollowing profile:", err);
     }
   };
 

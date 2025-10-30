@@ -5,29 +5,34 @@ import { Button, FormField, FormStyles } from "@/components/ui";
 import type { Errors } from "@/types";
 import placeholderImage from "@/assets/post_image_placeholder.jpg";
 import { axiosRes } from "@/api/axiosDefaults";
+import axios from "axios";
 
 const EditPostForm = () => {
   const { id } = useParams(); // grab the id part of the URL and store it
   if (!id) return <Text>Invalid post ID</Text>;
-  const navigate = useNavigate();
 
+  // controlled inputs:
   const [image, setImage] = useState<File | null>(null);
   const [previewURL, setPreviewURL] = useState<string | null>(null);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const [artistName, setArtistName] = useState<string | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Errors>({});
 
+  const navigate = useNavigate();
+
   const handleCancel = () => {
+    // reset all user input safely:
+    setImage(null);
+    setPreviewURL(placeholderImage);
     setTitle("");
     setContent("");
     setArtistName(null);
     setYear(null);
-    setImage(null);
-    setPreviewURL(placeholderImage);
     setIsPrivate(false);
     setErrors({});
     navigate(-2);
@@ -59,9 +64,24 @@ const EditPostForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors({});
+    setErrors({}); // reset any previous errors before submit
+
+    // required fields validation:
+    if (!title.trim()) {
+      setErrors({ title: "Title cannot be empty." });
+      return;
+    }
+    if (!content.trim()) {
+      setErrors({ content: "Content cannot be empty." });
+      return;
+    }
+    if (!image && !previewURL) {
+      setErrors({ image: "Please upload an image." });
+      return;
+    }
     setLoading(true);
 
+    // safely prepare formData for submission:
     const formData = new FormData();
     if (image) formData.append("image", image);
     formData.append("title", title);
@@ -73,19 +93,47 @@ const EditPostForm = () => {
     try {
       const { data } = await axiosRes.put(`/posts/${id}/`, formData);
       navigate(`/posts/${id}`); // redirect to the new post's page
-    } catch (err: any) {
-      if (err.response?.data) {
-        setErrors(err.response.data); // check for + store backend error data
+    } catch (err: unknown) {
+      // TS type guard - safely confirms this is an Axios error:
+      if (axios.isAxiosError(err)) {
+        const data = err.response?.data; // safely access the backend's reponse (if any)
+        if (!data) {
+          console.error("Network or connection error:", err);
+          setErrors({ non_field_errors: "Network error — please try again." });
+          return;
+        }
+        console.error("Backend error:", data); // log the raw data for debugging
+        if (typeof data === "string") {
+          setErrors({ non_field_errors: data });
+        } else {
+          // convert backend field arrays into single strings:
+          const formattedErrors = Object.fromEntries(
+            Object.entries(data).map(([key, value]) => [
+              key,
+              Array.isArray(value) ? value[0] : String(value),
+            ])
+          );
+          setErrors({
+            ...formattedErrors,
+            non_field_errors:
+              formattedErrors.non_field_errors ||
+              data.detail ||
+              "Couldn't update your post. Please try again.",
+          });
+        }
       } else {
-        console.error(err); // log unexpected errors
+        console.error("Unexpected error:", err); // log all other errors
+        setErrors({
+          non_field_errors: "Error updating post — something went wrong.",
+        });
       }
     } finally {
       setLoading(false);
     }
   };
 
+  // cleanup function for when component unmounts or previewURL or avatar changes:
   useEffect(() => {
-    // cleanup function for when component unmounts or previewURL or avatar changes:
     return () => {
       if (previewURL) {
         URL.revokeObjectURL(previewURL);
@@ -96,6 +144,11 @@ const EditPostForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <FormStyles title="Edit Post" maxWidth="736px">
+        {errors.non_field_errors && (
+          <Text color="red" textAlign="center" mb={3}>
+            {errors.non_field_errors}
+          </Text>
+        )}
         <label htmlFor="image-upload" style={{ cursor: "pointer" }}>
           <Text
             mb={3}
@@ -127,13 +180,14 @@ const EditPostForm = () => {
             display="none"
             accept="image/*"
             onChange={(e) => {
+              // controlled file input:
               const file = e.target.files?.[0] ?? null; // store the chosen file
               if (file) {
                 setImage(file); // save image/file in state
                 setPreviewURL(URL.createObjectURL(file)); // create new preview and save it in state
               } else {
                 setImage(null);
-                setPreviewURL(null);
+                setPreviewURL(previewURL || null); // fallback to the original
               }
             }}
           />

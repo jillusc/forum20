@@ -82,7 +82,7 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
       (response) => response, // <- successful responses are simply returned
       // begin error handling:
       async (error: unknown) => {
-        // ensure this is an Axios error before accessing response/config:
+        // TS type guard - safely confirms this is an Axios error; access response/config:
         if (isAxiosError(error) && error.config) {
           // i) store the original req config so it can be retried later if needed:
           const originalRequest = error.config as AxiosRequestConfig & {
@@ -116,7 +116,8 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
               ] = `Bearer ${newAccessToken}`;
               // retry the original request with the new token:
               return axiosRes(originalRequest);
-            } catch {
+            } catch (refreshError) {
+              console.error("Token refresh failed:", refreshError);
               // if refreshing fails: log out by clearing user state and redirecting:
               setCurrentUser(null);
               navigate("/login");
