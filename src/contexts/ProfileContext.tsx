@@ -66,6 +66,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleUnfollow = async (clickedProfile: Profile) => {
+    if (!clickedProfile.following_id) return;
     try {
       await axiosRes.delete(`/followers/${clickedProfile.following_id}/`);
       setProfileData((prev) =>

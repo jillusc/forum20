@@ -18,6 +18,8 @@ const AddCommentForm = ({ postId, setPost, setComments, onCancel }: Props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  if (!postId) return <Text>Invalid post ID</Text>;
+
   const handleCancel = () => {
     if (onCancel) onCancel(); // tells the parent to hide the form
     setContent("");

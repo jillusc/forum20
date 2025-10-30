@@ -42,7 +42,12 @@ const ProfilePage = () => {
   // and prevent crashes if required data is missing:
   if (loading) return <ProfilePageSkeletons />;
   if (error) return <Text>{error}</Text>;
-  if (!profile) return <Text>Profile not found</Text>;
+  if (!profile)
+    return (
+      <Text my={6} textAlign="center">
+        Profile not found
+      </Text>
+    );
 
   return (
     <>

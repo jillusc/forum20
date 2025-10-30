@@ -13,6 +13,7 @@ interface Props {
 }
 
 const EditCommentForm = ({ commentId, setComments, onCancel }: Props) => {
+  if (!commentId) return <Text>Invalid comment ID</Text>;
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

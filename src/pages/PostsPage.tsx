@@ -59,7 +59,12 @@ const PostsPage = ({
       </Text>
     );
   if (error) return <Text>{error}</Text>;
-  if (posts.results.length === 0) return <Text>{message}</Text>;
+  if (posts.results.length === 0)
+    return (
+      <Text my={6} textAlign="center">
+        {message}
+      </Text>
+    );
 
   return (
     <Box>

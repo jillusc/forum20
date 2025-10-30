@@ -16,6 +16,8 @@ const CommentTemplate = ({ comment, handleEdit, handleDelete }: Props) => {
   const currentUser = useCurrentUser();
   const isOwner = currentUser?.username === owner;
 
+  if (!comment) return null;
+
   return (
     <Box
       maxWidth="768px" // cap width at tablet size
@@ -35,7 +37,9 @@ const CommentTemplate = ({ comment, handleEdit, handleDelete }: Props) => {
           </VStack>
         </Link>
         <HStack gap={3}>
-          <Text>{new Date(updated_at).toLocaleDateString("en-GB")}</Text>
+          {updated_at && (
+            <Text>{new Date(updated_at).toLocaleDateString("en-GB")}</Text>
+          )}
           {isOwner && (
             <Box position="relative">
               <MoreDropdown
@@ -50,7 +54,7 @@ const CommentTemplate = ({ comment, handleEdit, handleDelete }: Props) => {
         </HStack>
       </HStack>
       <Box p={4} borderWidth="1px" borderColor="gray.200" borderRadius="2xl">
-        <Text>{content}</Text>
+        <Text>{content || ""}</Text>
       </Box>
     </Box>
   );

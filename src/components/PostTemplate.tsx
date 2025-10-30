@@ -18,6 +18,7 @@ import {
 } from "react-icons/fa";
 import { Avatar, MoreDropdown } from "@/components/ui";
 import type { Post } from "@/types";
+import placeholderImage from "@/assets/post_image_placeholder.jpg";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
 import { useSetPosts } from "@/contexts/PostsContext";
 import { axiosRes } from "@/api/axiosDefaults";
@@ -43,6 +44,8 @@ const PostTemplate = ({
   const [error, setError] = useState("");
   const currentUser = useCurrentUser(); // define current user
   const setPosts = useSetPosts();
+  const navigate = useNavigate();
+
   // destructure fields we need from post props:
   const {
     id,
@@ -62,7 +65,8 @@ const PostTemplate = ({
   } = post;
   const is_owner = currentUser?.username === owner;
   const isBookmarked = !!bookmark_id; // "if a bookmark_id exists, this means the current user has bookmarked this post, so return true"
-  const navigate = useNavigate();
+
+  if (!post) return <Text>Post data not available</Text>;
 
   const handleLikeToggle = async () => {
     try {
@@ -148,12 +152,14 @@ const PostTemplate = ({
       borderRadius="2xl"
     >
       <Flex justify="space-between" align="start">
-        <Link to={`/profiles/${profile_id}`}>
-          <VStack align="center" gap={1}>
-            <Avatar src={profile_image || undefined} />
-            <Text>{owner}</Text>
-          </VStack>
-        </Link>
+        {profile_id && (
+          <Link to={`/profiles/${profile_id}`}>
+            <VStack align="center" gap={1}>
+              <Avatar src={profile_image || undefined} />
+              <Text>{owner}</Text>
+            </VStack>
+          </Link>
+        )}
         <HStack gap={3}>
           <Text>{new Date(updated_at).toLocaleDateString("en-GB")}</Text>
           {is_owner && postIsEditable && (
@@ -185,7 +191,7 @@ const PostTemplate = ({
         >
           {postIsEditable ? (
             <Image
-              src={image}
+              src={image || placeholderImage}
               alt={`[IMAGE: ${title}]`}
               maxH="100%"
               width="100%"
@@ -194,7 +200,7 @@ const PostTemplate = ({
           ) : (
             <Link to={`/posts/${id}`}>
               <Image
-                src={image}
+                src={image || placeholderImage}
                 alt={`[IMAGE: ${title}]`}
                 maxH="100%" // makes sure image never exceeds Box height
                 width="100%" // responsive width
@@ -272,5 +278,5 @@ const PostTemplate = ({
 
 export default PostTemplate;
 
-// line 62: bookmark_id in the post props is only set for the currently logged-in user,
+// line 68: bookmark_id in the post props is only set for the currently logged-in user,
 // so checking !!bookmark_id lets the frontend know whether that user has already bookmarked this post

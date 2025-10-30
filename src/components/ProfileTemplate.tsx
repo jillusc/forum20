@@ -20,6 +20,7 @@ const ProfileTemplate = ({
 }: Props) => {
   const currentUser = useCurrentUser();
   const navigate = useNavigate();
+
   const {
     owner,
     created_at,
@@ -35,6 +36,8 @@ const ProfileTemplate = ({
     { label: "followers", value: followers_count },
     { label: "following", value: following_count },
   ];
+
+  if (!profile) return <Text>Profile data not available</Text>;
 
   return (
     <Box
@@ -88,7 +91,7 @@ const ProfileTemplate = ({
           </Box>
         )}
 
-        {!is_owner && (
+        {!is_owner && handleFollow && handleUnfollow && (
           <Box width="100%" display="flex" justifyContent="center">
             <Button
               onClick={() =>

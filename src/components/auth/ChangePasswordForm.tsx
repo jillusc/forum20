@@ -12,16 +12,17 @@ interface ChangePasswordErrors {
 }
 
 const ChangePasswordForm = () => {
-  const { id } = useParams(); // get profile id from the URL
+  const { id } = useParams<{ id?: string }>();
+  const navigate = useNavigate();
+  const setCurrentUser = useSetCurrentUser();
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ChangePasswordErrors>({});
 
-  const navigate = useNavigate();
-
-  const setCurrentUser = useSetCurrentUser();
+  if (!id) return <Text>Invalid profile ID</Text>;
 
   const handleCancel = () => {
     setCurrentPassword("");

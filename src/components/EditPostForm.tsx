@@ -7,6 +7,10 @@ import placeholderImage from "@/assets/post_image_placeholder.jpg";
 import { axiosRes } from "@/api/axiosDefaults";
 
 const EditPostForm = () => {
+  const { id } = useParams(); // grab the id part of the URL and store it
+  if (!id) return <Text>Invalid post ID</Text>;
+  const navigate = useNavigate();
+
   const [image, setImage] = useState<File | null>(null);
   const [previewURL, setPreviewURL] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -16,8 +20,6 @@ const EditPostForm = () => {
   const [isPrivate, setIsPrivate] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Errors>({});
-
-  const navigate = useNavigate();
 
   const handleCancel = () => {
     setTitle("");
@@ -30,8 +32,6 @@ const EditPostForm = () => {
     setErrors({});
     navigate(-2);
   };
-
-  const { id } = useParams(); // grab the id part of the URL and store it
 
   // upon mount, this fetches the existing post:
   useEffect(() => {

@@ -102,7 +102,12 @@ const PostPage = () => {
   // and prevent crashes if required data is missing:
   if (loading) return <PostPageSkeleton />;
   if (error) return <Text>{error}</Text>;
-  if (!post) return <Text>Content not found</Text>;
+  if (!post)
+    return (
+      <Text my={6} textAlign="center">
+        Content not found
+      </Text>
+    );
 
   return (
     <>

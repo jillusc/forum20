@@ -7,16 +7,16 @@ import type { Errors } from "@/types";
 import { axiosRes } from "@/api/axiosDefaults";
 
 const EditProfileForm = () => {
-  const { id } = useParams(); // get profile id from the URL
-  // local state for the form fields:
+  const { id } = useParams();
+  if (!id) return <Text>Invalid profile ID</Text>;
+  const navigate = useNavigate();
+
   const [avatar, setAvatar] = useState<File | null>(null);
   const [username, setUsername] = useState("");
   const [bioText, setBioText] = useState("");
   const [previewURL, setPreviewURL] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Errors>({});
-
-  const navigate = useNavigate();
 
   const handleCancel = () => {
     setAvatar(null);
