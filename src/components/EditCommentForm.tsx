@@ -19,23 +19,21 @@ interface Errors {
 }
 
 const EditCommentForm = ({ commentId, setComments, onCancel }: Props) => {
-  if (!commentId) return <Text>Invalid comment ID</Text>;
   const [content, setContent] = useState<string>(""); // controlled input
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
 
   // upon mount, this fetches the existing comment:
   useEffect(() => {
+    if (!commentId) return;
     const fetchComment = async () => {
       try {
         const { data } = await axiosRes.get(`/comments/${commentId}/`);
         setContent(data.content); // prefill textarea
       } catch (err) {
         setErrors({});
-        console.error(err);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching comment:", err);
       }
     };
     // next, call this async function:

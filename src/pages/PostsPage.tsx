@@ -10,6 +10,8 @@ import {
 } from "@/contexts/PostsContext";
 import { PostTemplate } from "@/components";
 import { fetchMoreData } from "@/utils/utils";
+import axios from "axios";
+import { UIMessage } from "@/components/ui";
 
 interface Props {
   filter?: string; // takes an optional filter (for diff. versions of this page)
@@ -39,9 +41,25 @@ const PostsPage = ({
         );
         // take the response and store its data in state:
         setPosts({ results: data.results, next: data.next });
-      } catch (err) {
-        setError("");
-        console.error(err);
+      } catch (err: unknown) {
+        // TS type guard - safely confirms this is an Axios error:
+        if (axios.isAxiosError(err)) {
+          const data = err.response?.data; // safely access the backend’s response (if any)
+          if (!data) {
+            console.error("Network or connection error:", err);
+            setError("Network error - please try again.");
+            return;
+          }
+          console.error("Backend error:", data); // log the raw data for debugging
+          setError(
+            typeof data === "string"
+              ? data
+              : data.detail ?? "Couldn't load posts. Please try again."
+          );
+        } else {
+          console.error("Unexpected error:", err); // log all other errors
+          setError("Something went wrong.");
+        }
       } finally {
         setLoading(false);
       }
@@ -52,19 +70,10 @@ const PostsPage = ({
 
   // Provide fallback UI while data is loading, handle fetch errors,
   // and prevent crashes if required data is missing:
-  if (loading)
-    return (
-      <Text my={6} textAlign="center">
-        Loading posts...
-      </Text>
-    );
-  if (error) return <Text>{error}</Text>;
-  if (posts.results.length === 0)
-    return (
-      <Text my={6} textAlign="center">
-        {message}
-      </Text>
-    );
+  if (loading) return <UIMessage>Loading posts...</UIMessage>;
+  if (error) return <UIMessage color="red">{error}</UIMessage>;
+  if (!loading && posts.results.length === 0)
+    return <UIMessage> {message}</UIMessage>;
 
   return (
     <Box>

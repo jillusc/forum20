@@ -20,6 +20,7 @@ import {
   FaRegHeart,
 } from "react-icons/fa";
 import { CommentTemplate, EditCommentForm } from "@/components";
+import { UIMessage } from "@/components/ui";
 import axios from "axios";
 
 const ActivityPage = () => {
@@ -79,9 +80,25 @@ const ActivityPage = () => {
           next: commentsRes.data.next || null,
         });
         setBookmarks(bookmarksRes.data.results);
-      } catch (err) {
-        setError("");
-        console.error(err);
+      } catch (err: unknown) {
+        // TS type guard - safely confirms this is an Axios error:
+        if (axios.isAxiosError(err)) {
+          const data = err.response?.data; // safely access the backend’s response (if any)
+          if (!data) {
+            console.error("Network or connection error:", err);
+            setError("Network error - please try again.");
+            return;
+          }
+          console.error("Backend error:", data); // log the raw data for debugging
+          setError(
+            typeof data === "string"
+              ? data
+              : data.detail ?? "Couldn't load your activity. Please try again."
+          );
+        } else {
+          console.error("Unexpected error:", err); // log all other errors
+          setError("Something went wrong.");
+        }
       } finally {
         setLoading(false);
       }
@@ -91,19 +108,9 @@ const ActivityPage = () => {
 
   // Provide fallback UI while data is loading, handle fetch errors,
   // and prevent crashes if required data (currentUser) is missing:
-  if (loading)
-    return (
-      <Text my={6} textAlign="center">
-        Loading activity...
-      </Text>
-    );
-  if (error) return <Text>{error}</Text>;
-  if (!currentUser)
-    return (
-      <Text my={6} textAlign="center">
-        Content not found
-      </Text>
-    );
+  if (loading) return <UIMessage>Loading activity...</UIMessage>;
+  if (error) return <UIMessage color="red">{error}</UIMessage>;
+  if (!loading && !currentUser) return <UIMessage>Content not found</UIMessage>;
 
   const renderGridItem = (item: any, type: "Like" | "Bookmark") => (
     <Box

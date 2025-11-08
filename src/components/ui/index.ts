@@ -11,3 +11,4 @@ export {
   TopProfilesAsideSkeleton,
 } from "./skeletons/Profile";
 export { default as TextLink } from "./TextLink";
+export { UIMessage } from "./UIMessage";

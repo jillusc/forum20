@@ -10,6 +10,7 @@ import { fetchMoreData } from "@/utils/utils";
 import InfiniteScroll from "react-infinite-scroll-component";
 import PostPageSkeleton from "./PostPageSkeleton";
 import axios from "axios";
+import { UIMessage } from "@/components/ui";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>(); // grab the post ID from the URL
@@ -120,11 +121,24 @@ const PostPage = () => {
             results: [...prevPosts.results, postRes.data],
           };
         });
-      } catch (err: any) {
-        if (err.response?.data) {
-          setError(err.response.data); // check for + store backend error data
+      } catch (err: unknown) {
+        // TS type guard - safely confirms this is an Axios error:
+        if (axios.isAxiosError(err)) {
+          const data = err.response?.data; // safely access the backend’s response (if any)
+          if (!data) {
+            console.error("Network or connection error:", err);
+            setError("Network error - please try again.");
+            return;
+          }
+          console.error("Backend error:", data); // log the raw data for debugging
+          setError(
+            typeof data === "string"
+              ? data
+              : data.detail ?? "Couldn't load post. Please try again."
+          );
         } else {
-          console.error(err); // log unexpected errors
+          console.error("Unexpected error:", err); // log all other errors
+          setError("Something went wrong.");
         }
       } finally {
         setLoading(false);
@@ -136,13 +150,9 @@ const PostPage = () => {
   // Provide fallback UI while data is loading, handle fetch errors,
   // and prevent crashes if required data is missing:
   if (loading) return <PostPageSkeleton />;
-  if (error) return <Text>{error}</Text>;
-  if (!post)
-    return (
-      <Text my={6} textAlign="center">
-        Content not found
-      </Text>
-    );
+  if (error) return <UIMessage color="red">{error}</UIMessage>;
+  if (!loading && !post) return <UIMessage>Post not found</UIMessage>;
+  if (!post) return null; // also needed for TS
 
   return (
     <>

@@ -1,5 +1,6 @@
 import { axiosRes } from "@/api/axiosDefaults";
 import type { Profile } from "@/types";
+import axios from "axios";
 
 // updates a profile after following:
 export const followHelper = (
@@ -68,7 +69,11 @@ export const fetchMoreData = async <T extends { id: number }>(
         // so we append only new items:
       }, prev.results),
     }));
-  } catch (err) {
-    console.error(err);
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      console.error("Error fetching more data:", err.response?.data || err);
+    } else {
+      console.error("Unexpected error:", err);
+    }
   }
 };

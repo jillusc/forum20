@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, HStack, Input, Text, Textarea } from "@chakra-ui/react";
-import { Button, FormField, FormStyles } from "@/components/ui";
+import { Button, FormField, FormStyles, UIMessage } from "@/components/ui";
 import placeholderImage from "@/assets/post_image_placeholder.jpg";
 import type { Errors } from "@/types";
 import { axiosRes } from "@/api/axiosDefaults";
@@ -9,7 +9,6 @@ import axios from "axios";
 
 const EditProfileForm = () => {
   const { id } = useParams();
-  if (!id) return <Text>Invalid profile ID</Text>;
 
   // controlled inputs:
   const [avatar, setAvatar] = useState<File | null>(null);
@@ -19,6 +18,7 @@ const EditProfileForm = () => {
 
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Errors>({});
+  const [submitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -34,6 +34,7 @@ const EditProfileForm = () => {
 
   // upon mount, this fetches the existing profile data:
   useEffect(() => {
+    if (!id) return;
     const fetchProfile = async () => {
       try {
         const { data } = await axiosRes.get(`/profiles/${id}/`);
@@ -41,9 +42,31 @@ const EditProfileForm = () => {
         // (avatar remains null until user selects a new file)
         setUsername(data.owner);
         setBioText(data.content || null);
-      } catch (err) {
-        setErrors({});
-        console.error(err);
+      } catch (err: unknown) {
+        // TS type guard - safely confirms this is an Axios error:
+        if (axios.isAxiosError(err)) {
+          const data = err.response?.data; // safely access the backend’s response (if any)
+          if (!data) {
+            console.error("Network or connection error:", err);
+            setErrors({
+              non_field_errors: "Network error - please try again.",
+            });
+            return;
+          }
+          console.error("Backend error:", data); // log the raw data for debugging
+          setErrors(
+            typeof data === "string"
+              ? { non_field_errors: data }
+              : {
+                  non_field_errors:
+                    data.detail ??
+                    "Couldn't load your profile. Please try again.",
+                }
+          );
+        } else {
+          console.error("Unexpected error:", err); // log all other errors
+          setErrors({ non_field_errors: "Something went wrong." });
+        }
       } finally {
         setLoading(false);
       }
@@ -61,7 +84,7 @@ const EditProfileForm = () => {
       setErrors({ owner: "Username cannot be empty." });
       return;
     }
-    setLoading(true);
+    setSubmitting(true);
 
     // safely prepare formData for submission:
     const formData = new FormData();
@@ -107,7 +130,7 @@ const EditProfileForm = () => {
         });
       }
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -119,6 +142,11 @@ const EditProfileForm = () => {
       }
     };
   }, [previewURL]);
+
+  if (loading) return <UIMessage>Loading profile...</UIMessage>;
+  if (errors.non_field_errors)
+    return <UIMessage color="red">{errors.non_field_errors}</UIMessage>;
+  if (!loading && !username) return <UIMessage>Profile not found</UIMessage>;
 
   return (
     <form onSubmit={handleSubmit}>

@@ -7,7 +7,7 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosRes } from "@/api/axiosDefaults";
-import { isAxiosError, type AxiosRequestConfig } from "axios";
+import axios, { isAxiosError, type AxiosRequestConfig } from "axios";
 import type { User } from "@/types";
 
 // type for the context value (user + setter):
@@ -41,14 +41,30 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
           });
           setCurrentUser(data); // restore currentUser state
           setLoading(false);
-        } catch (err) {
-          setError("");
-          console.error(err);
+        } catch (err: unknown) {
+          // TS type guard - safely confirms this is an Axios error:
+          if (axios.isAxiosError(err)) {
+            const data = err.response?.data; // safely access the backend’s response (if any)
+            if (!data) {
+              console.error("Network or connection error:", err);
+              setError("Network error - please try again.");
+              return;
+            }
+            console.error("Backend error:", data); // log the raw data for debugging
+            setError(
+              typeof data === "string"
+                ? data
+                : data.detail ??
+                    "Couldn't load your activity. Please try again."
+            );
+          } else {
+            console.error("Unexpected error:", err); // log all other errors
+            setError("Something went wrong.");
+          }
           setCurrentUser(null);
-          setLoading(false); // stop loading before redirect
           navigate("/login"); // redirect if token invalid/unmount the provider
         } finally {
-          setLoading(false); // always run after try/catch
+          setLoading(false);
         }
       } else {
         setLoading(false); // no token, just stop loading
