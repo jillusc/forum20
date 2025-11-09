@@ -2,6 +2,7 @@ import { useState } from "react";
 import { HStack, Text, Textarea, VStack } from "@chakra-ui/react";
 import { Button, FormStyles } from "@/components/ui";
 import type { Comment, Post } from "@/types";
+import { useSetPosts } from "@/contexts/PostsContext";
 import { axiosRes } from "@/api/axiosDefaults";
 import axios from "axios";
 
@@ -21,6 +22,8 @@ interface Errors {
 
 const AddCommentForm = ({ postId, setPost, setComments, onCancel }: Props) => {
   const [content, setContent] = useState<string>(""); // controlled input
+  const setPosts = useSetPosts();
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
 
@@ -54,6 +57,14 @@ const AddCommentForm = ({ postId, setPost, setComments, onCancel }: Props) => {
       setPost((prev) =>
         prev ? { ...prev, comments_count: prev.comments_count + 1 } : prev
       );
+      setPosts((prev) => ({
+        ...prev,
+        results: prev.results.map((post) =>
+          post.id === postId
+            ? { ...post, comments_count: post.comments_count + 1 }
+            : post
+        ),
+      }));
       setContent(""); // clear input after successful submit
       if (onCancel) onCancel(); // hide the form
     } catch (err: unknown) {
