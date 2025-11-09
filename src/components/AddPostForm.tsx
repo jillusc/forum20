@@ -17,7 +17,7 @@ const AddPostForm = () => {
   const [year, setYear] = useState<number | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
 
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ const AddPostForm = () => {
       return; // stop submission
     }
 
-    setLoading(true);
+    setSubmitting(true);
 
     // safely prepare formData for submission:
     const formData = new FormData();
@@ -102,7 +102,7 @@ const AddPostForm = () => {
         });
       }
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -114,6 +114,8 @@ const AddPostForm = () => {
       }
     };
   }, [previewURL]);
+
+  const isFormIncomplete = !title.trim() || !content.trim() || !image;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -245,7 +247,13 @@ const AddPostForm = () => {
           />
         </label>
         <HStack justify="center" gap={4}>
-          <Button type="submit">Create</Button>
+          <Button
+            type="submit"
+            loading={submitting}
+            disabled={isFormIncomplete || submitting}
+          >
+            Create
+          </Button>
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancel
           </Button>

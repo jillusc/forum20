@@ -11,4 +11,5 @@ export {
   TopProfilesAsideSkeleton,
 } from "./skeletons/Profile";
 export { default as TextLink } from "./TextLink";
+export { Toast } from "./Toast";
 export { UIMessage } from "./UIMessage";

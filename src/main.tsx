@@ -6,6 +6,7 @@ import {
   CurrentUserProvider,
   PostsProvider,
   ProfileProvider,
+  ToastProvider,
 } from "@/contexts";
 import { system } from "@/theme";
 import "@/index.css";
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <CurrentUserProvider>
           <ProfileProvider>
             <PostsProvider>
-              <App />
+              <ToastProvider>
+                <App />
+              </ToastProvider>
             </PostsProvider>
           </ProfileProvider>
         </CurrentUserProvider>

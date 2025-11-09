@@ -5,6 +5,7 @@ import { Button, FormStyles } from "@/components/ui";
 import { useSetCurrentUser } from "@/contexts/CurrentUserContext";
 import { axiosRes } from "@/api/axiosDefaults";
 import axios from "axios";
+import { useToast } from "@/contexts";
 
 interface ChangePasswordErrors {
   currentPassword?: string;
@@ -24,8 +25,8 @@ const ChangePasswordForm = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ChangePasswordErrors>({});
 
+  const showToast = useToast();
   const navigate = useNavigate();
-  const setCurrentUser = useSetCurrentUser();
 
   if (!id) return <Text>Invalid profile ID</Text>;
 
@@ -81,7 +82,7 @@ const ChangePasswordForm = () => {
         "/dj-rest-auth/password/change/",
         dataToSend
       );
-      setCurrentUser(data.user);
+      showToast("Password changed.");
       navigate(`/profiles/${id}`);
     } catch (err: unknown) {
       // TS type guard - safely confirms this is an Axios error:
@@ -123,49 +124,51 @@ const ChangePasswordForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FormStyles title="Change Password">
-        {errors.non_field_errors && (
-          <Text color="red" textAlign="center" mb={3}>
-            {errors.non_field_errors}
-          </Text>
-        )}
-        <Input
-          id="currentPassword"
-          type="password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          placeholder="Enter current password"
-        />
-        {errors.currentPassword && (
-          <Text color="red">{errors.currentPassword}</Text>
-        )}
-        <Input
-          id="newPassword"
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          placeholder="Enter new password"
-        />
-        {errors.newPassword && <Text color="red">{errors.newPassword}</Text>}
-        <Input
-          id="confirmPassword"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Confirm new password"
-        />
-        {errors.confirmPassword && (
-          <Text color="red">{errors.confirmPassword}</Text>
-        )}
-        <HStack justify="center" gap={4}>
-          <Button type="submit">Save</Button>
-          <Button type="button" variant="outline" onClick={handleCancel}>
-            Cancel
-          </Button>
-        </HStack>
-      </FormStyles>
-    </form>
+    <>
+      <form onSubmit={handleSubmit}>
+        <FormStyles title="Change Password">
+          {errors.non_field_errors && (
+            <Text color="red" textAlign="center" mb={3}>
+              {errors.non_field_errors}
+            </Text>
+          )}
+          <Input
+            id="currentPassword"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            placeholder="Enter current password"
+          />
+          {errors.currentPassword && (
+            <Text color="red">{errors.currentPassword}</Text>
+          )}
+          <Input
+            id="newPassword"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="Enter new password"
+          />
+          {errors.newPassword && <Text color="red">{errors.newPassword}</Text>}
+          <Input
+            id="confirmPassword"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm new password"
+          />
+          {errors.confirmPassword && (
+            <Text color="red">{errors.confirmPassword}</Text>
+          )}
+          <HStack justify="center" gap={4}>
+            <Button type="submit">Save</Button>
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+          </HStack>
+        </FormStyles>
+      </form>
+    </>
   );
 };
 

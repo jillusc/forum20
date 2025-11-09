@@ -1,4 +1,4 @@
-import { Button as ChakraButton } from "@chakra-ui/react";
+import { Button as ChakraButton, Spinner } from "@chakra-ui/react";
 
 interface Props {
   children: React.ReactNode;
@@ -6,6 +6,7 @@ interface Props {
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
   disabled?: boolean;
+  loading?: boolean;
 }
 
 const Button = ({
@@ -14,12 +15,13 @@ const Button = ({
   type = "button",
   onClick,
   disabled = false,
+  loading = false,
 }: Props) => {
   return (
     <ChakraButton
       type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       variant={variant}
       borderRadius="100px"
       minW="80px"
@@ -52,6 +54,7 @@ const Button = ({
       }}
       boxShadow="none"
     >
+      {loading && <Spinner size="sm" />}
       {children}
     </ChakraButton>
   );

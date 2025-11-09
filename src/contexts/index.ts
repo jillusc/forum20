@@ -5,3 +5,4 @@ export {
   useProfileData,
   useSetProfileData,
 } from "./ProfileContext";
+export { ToastProvider, useToast } from "./ToastContext";

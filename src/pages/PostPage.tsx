@@ -11,6 +11,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import PostPageSkeleton from "./PostPageSkeleton";
 import axios from "axios";
 import { UIMessage } from "@/components/ui";
+import { useToast } from "@/contexts";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>(); // grab the post ID from the URL
@@ -29,16 +30,22 @@ const PostPage = () => {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [showAddCommentForm, setShowAddCommentForm] = useState(false);
   const [deletingPost, setDeletingPost] = useState(false);
+  const showToast = useToast();
 
   const handleEdit = () => {
     navigate(`/posts/${id}/edit`);
   };
 
   const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this post?"
+    );
+    if (!confirmDelete) return; // stop if the user cancels
     setDeletingPost(true);
     try {
       await axiosRes.delete(`/posts/${id}/`);
-      navigate(-2);
+      showToast("Post deleted.");
+      navigate(-1);
     } catch (err: unknown) {
       // TS type guard - safely confirms this is an Axios error:
       if (axios.isAxiosError(err)) {
@@ -72,6 +79,22 @@ const PostPage = () => {
         ...prev,
         results: prev.results.filter((comment) => comment.id !== id),
       }));
+      // update the single post on PostPage:
+      setPost((prev) =>
+        prev
+          ? { ...prev, comments_count: Math.max(prev.comments_count - 1, 0) }
+          : prev
+      );
+      // update the same post inside the global posts context:
+      setPosts((prevPosts) => ({
+        ...prevPosts,
+        results: prevPosts.results.map((post) =>
+          post.id === post?.id
+            ? { ...post, comments_count: Math.max(post.comments_count - 1, 0) }
+            : post
+        ),
+      }));
+      showToast("Comment deleted.");
     } catch (err: unknown) {
       // TS type guard - safely confirms this is an Axios error:
       if (axios.isAxiosError(err)) {
@@ -218,5 +241,3 @@ const PostPage = () => {
 };
 
 export default PostPage;
-
-// line 13: useParams() allows us to get URL parameters
