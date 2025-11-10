@@ -66,6 +66,11 @@ const PostTemplate = ({
 
   if (!post) return <Text>Post data not available</Text>;
 
+  const optimizeImage = (url: string) => {
+    if (!url || !url.includes("/upload/")) return url;
+    return url.replace("/upload/", `/upload/w_500,q_auto,f_auto/`);
+  };
+
   const handleLikeToggle = async () => {
     try {
       const { status, data } = await axiosRes.post("/likes/", { post: id });
@@ -185,20 +190,22 @@ const PostTemplate = ({
         >
           {postIsEditable ? (
             <Image
-              src={image || placeholderImage}
+              src={optimizeImage(image || placeholderImage)}
               alt={`[IMAGE: ${title}]`}
               maxH="100%"
               width="100%"
               objectFit="contain"
+              loading="lazy"
             />
           ) : (
             <Link to={`/posts/${id}`}>
               <Image
-                src={image || placeholderImage}
+                src={optimizeImage(image || placeholderImage)}
                 alt={`[IMAGE: ${title}]`}
                 maxH="100%" // makes sure image never exceeds Box height
                 width="100%" // responsive width
                 objectFit="contain" // maintains aspect ratio
+                loading="lazy"
               />
             </Link>
           )}

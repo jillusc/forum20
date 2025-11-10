@@ -138,6 +138,9 @@ const ActivityPage = () => {
             <img
               src={item.post_image}
               alt={item.post_title}
+              loading="lazy"
+              width="300"
+              height="150"
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </Box>

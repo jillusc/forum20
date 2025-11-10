@@ -9,7 +9,6 @@ import {
   ToastProvider,
 } from "@/contexts";
 import { system } from "@/theme";
-import "@/index.css";
 import App from "@/App.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
