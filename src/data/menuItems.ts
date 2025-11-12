@@ -1,3 +1,4 @@
+import type { NavigateFunction } from "react-router-dom";
 import type { IconType } from "react-icons";
 import { FaEdit, FaTrashAlt, FaLock } from "react-icons/fa";
 
@@ -15,7 +16,10 @@ export const postMenuItems = (
   { label: "Delete", icon: FaTrashAlt, onClick: onDelete },
 ];
 
-export const profileMenuItems = (navigate: any, id: string): MenuItem[] => [
+export const profileMenuItems = (
+  navigate: NavigateFunction,
+  id: string
+): MenuItem[] => [
   {
     label: "Edit profile",
     icon: FaEdit,

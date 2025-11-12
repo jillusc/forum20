@@ -50,11 +50,13 @@ export interface Profile {
 }
 
 export interface Like {
-  owner_id: number;
-  username: string;
+  id: number;
+  created_at: string;
+  owner: string;
+  post: number;
   post_title: string;
+  post_image: string;
   post_owner: string;
-  post_owner_id: number;
   post_owner_avatar: string;
 }
 
@@ -65,10 +67,10 @@ export interface Comment {
   profile_id: number;
   profile_image: string | null;
   post: number;
-  post_id: number;
+  post_id?: number;
   post_title: string;
+  post_image: string;
   post_owner: string;
-  post_owner_id: number;
   post_owner_avatar: string;
   content: string;
   created_at: string;
@@ -81,8 +83,8 @@ export interface Bookmark {
   owner: string;
   post: number;
   post_title: string;
+  post_image: string;
   post_owner: string;
-  post_owner_id: number;
   post_owner_avatar: string;
 }
 

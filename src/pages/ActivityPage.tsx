@@ -19,45 +19,16 @@ import {
   FaRegCommentDots,
   FaRegHeart,
 } from "react-icons/fa";
-import { CommentTemplate, EditCommentForm } from "@/components";
-import { UIMessage } from "@/components/ui";
-import axios from "axios";
 
 const ActivityPage = () => {
   const currentUser = useCurrentUser();
   const tabs = ["Likes", "Comments", "Bookmarks"];
   const [likes, setLikes] = useState<Like[]>([]);
-  const [comments, setComments] = useState<{
-    results: Comment[];
-    next: string | null;
-  }>({
-    results: [],
-    next: null,
-  });
+  const [comments, setComments] = useState<Comment[]>([]);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("Likes");
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
-
-  const handleEditComment = (id: number) => setEditingCommentId(id);
-
-  const handleDeleteComment = async (id: number) => {
-    try {
-      await axiosRes.delete(`/comments/${id}/`);
-      setComments((prev) => ({
-        ...prev,
-        results: prev.results.filter((comment) => comment.id !== id),
-      }));
-    } catch (err: unknown) {
-      // TS type guard - safely confirms this is an Axios error:
-      if (axios.isAxiosError(err)) {
-        setError("Couldn't delete comment. Please try again.");
-      } else {
-        setError("Something went wrong.");
-      }
-    }
-  };
 
   // use useEffect to fetch the posts liked, commented on and bookmarked by the user when this component mounts:
   useEffect(() => {
@@ -75,30 +46,11 @@ const ActivityPage = () => {
         ]);
         // ...and store their data in state:
         setLikes(likesRes.data.results);
-        setComments({
-          results: commentsRes.data.results,
-          next: commentsRes.data.next || null,
-        });
+        setComments(commentsRes.data.results);
         setBookmarks(bookmarksRes.data.results);
-      } catch (err: unknown) {
-        // TS type guard - safely confirms this is an Axios error:
-        if (axios.isAxiosError(err)) {
-          const data = err.response?.data; // safely access the backend’s response (if any)
-          if (!data) {
-            console.error("Network or connection error:", err);
-            setError("Network error - please try again.");
-            return;
-          }
-          console.error("Backend error:", data); // log the raw data for debugging
-          setError(
-            typeof data === "string"
-              ? data
-              : data.detail ?? "Couldn't load your activity. Please try again."
-          );
-        } else {
-          console.error("Unexpected error:", err); // log all other errors
-          setError("Something went wrong.");
-        }
+      } catch (err) {
+        setError("");
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -108,11 +60,21 @@ const ActivityPage = () => {
 
   // Provide fallback UI while data is loading, handle fetch errors,
   // and prevent crashes if required data (currentUser) is missing:
-  if (loading) return <UIMessage>Loading activity...</UIMessage>;
-  if (error) return <UIMessage color="red">{error}</UIMessage>;
-  if (!loading && !currentUser) return <UIMessage>Content not found</UIMessage>;
+  if (loading)
+    return (
+      <Text my={6} textAlign="center">
+        Loading activity...
+      </Text>
+    );
+  if (error) return <Text>{error}</Text>;
+  if (!currentUser)
+    return (
+      <Text my={6} textAlign="center">
+        Content not found
+      </Text>
+    );
 
-  const renderGridItem = (item: any, type: "Like" | "Bookmark") => (
+  const renderGridItem = (item: Like | Bookmark, type: "Like" | "Bookmark") => (
     <Box
       key={item.id}
       p={4}
@@ -138,9 +100,6 @@ const ActivityPage = () => {
             <img
               src={item.post_image}
               alt={item.post_title}
-              loading="lazy"
-              width="300"
-              height="150"
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </Box>
@@ -160,67 +119,47 @@ const ActivityPage = () => {
     </Box>
   );
 
-  const renderCommentItem = (item: any) => (
-    <Box key={item.id}>
-      <Box p={4} position="relative">
-        <VStack gap={3}>
-          <Link to={`/posts/${item.post}`}>
-            {item.post_image && (
-              <Box
-                maxW="200px"
-                mx="auto"
-                overflow="hidden"
-                mt={3}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <img
-                  src={item.post_image}
-                  alt={item.post_title}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              </Box>
-            )}
-            <Text fontWeight="bold" textAlign="center" my={2}>
-              {item.post_title}
-            </Text>
-          </Link>
-
-          <Box width="84%">
-            <Box marginLeft={3} mb={3}>
-              <Text fontSize="xs">
-                You commented on{" "}
-                {new Date(item.updated_at).toLocaleDateString("en-GB")}:
-              </Text>
+  const renderCommentItem = (item: Comment) => (
+    <Box key={item.id} p={4}>
+      <VStack gap={3}>
+        <Link to={`/posts/${item.post}`}>
+          {item.post_image && (
+            <Box
+              maxW="200px"
+              mx="auto"
+              overflow="hidden"
+              mt={3}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <img
+                src={item.post_image}
+                alt={item.post_title}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                }}
+              />
             </Box>
+          )}
+          <Text fontWeight="bold" textAlign="center" my={2}>
+            {item.post_title}
+          </Text>
+        </Link>
 
-            <HStack align="center" gap={3}>
-              {/* "when a comment's id matches the state value, show the edit form instead of the usual comment content": */}
-              {editingCommentId === item.id ? (
-                <Box width="100%">
-                  <EditCommentForm
-                    commentId={item.id}
-                    setComments={setComments}
-                    onCancel={() => setEditingCommentId(null)}
-                  />
-                </Box>
-              ) : (
-                <CommentTemplate
-                  comment={item}
-                  handleEdit={() => handleEditComment(item.id)}
-                  handleDelete={() => handleDeleteComment(item.id)}
-                />
-              )}
-            </HStack>
+        <Box width="84%" p={4} mx="auto">
+          <Text fontSize="xs">
+            You commented on{" "}
+            {new Date(item.created_at).toLocaleDateString("en-GB")}:
+          </Text>
+          <Box my={2} p={4} borderWidth="1px" borderRadius="2xl">
+            <Text>{item.content}</Text>
           </Box>
-        </VStack>
-      </Box>
-      <Box as="hr" my={4} borderColor="gray.200" />
+        </Box>
+      </VStack>
+      <Box as="hr" mt={4} borderColor="gray.200" />
     </Box>
   );
 
@@ -230,6 +169,7 @@ const ActivityPage = () => {
         Recent activity
       </Heading>
       <Box
+        maxWidth="768px"
         width="100%"
         mx="auto"
         my={2}
@@ -293,10 +233,10 @@ const ActivityPage = () => {
             ))}
 
           {activeTab === "Comments" &&
-            (comments.results.length === 0 ? (
+            (comments.length === 0 ? (
               <Text>No comments to show.</Text>
             ) : (
-              comments.results.map((comment) => renderCommentItem(comment))
+              comments.map((comment) => renderCommentItem(comment))
             ))}
 
           {activeTab === "Bookmarks" &&

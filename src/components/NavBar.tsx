@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Box, Separator, Flex, Image, Text, Icon } from "@chakra-ui/react";
 import { FaBars, FaTimes } from "react-icons/fa";
+import type { IconType } from "react-icons";
 import { NavItems } from "@/components";
 import { Avatar } from "@/components/ui";
 import logo from "../assets/logo.jpg";
@@ -9,6 +10,13 @@ import {
   useCurrentUser,
   useSetCurrentUser,
 } from "@/contexts/CurrentUserContext";
+
+interface NavItem {
+  label: string;
+  icon: IconType;
+  size: number;
+  path?: string;
+}
 
 const NavBar = () => {
   const currentUser = useCurrentUser(); // grab (and label) the value of the cUser state variable
@@ -48,7 +56,7 @@ const NavBar = () => {
   };
 
   // helper function to render nav items:
-  const renderNavItem = (item: any, onClick?: () => void) => {
+  const renderNavItem = (item: NavItem, onClick?: () => void) => {
     // logout nav item:
     if (item.label === "Log out") {
       return (
