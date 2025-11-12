@@ -7,7 +7,7 @@ import {
   usePostsLoading,
   useSetPosts,
   useSetPostsLoading,
-} from "@/contexts/PostsContext";
+} from "@/contexts";
 import { PostTemplate } from "@/components";
 import { fetchMoreData } from "@/utils/utils";
 import axios from "axios";

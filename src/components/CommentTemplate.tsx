@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Box, HStack, Text, VStack } from "@chakra-ui/react";
-import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { useCurrentUser } from "@/contexts/useCurrentUser";
 import { Avatar, MoreDropdown } from "@/components/ui";
 import { commentMenuItems } from "@/data/menuItems";
 import type { Comment } from "@/types";

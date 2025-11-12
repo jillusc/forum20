@@ -2,7 +2,7 @@ import { Suspense, lazy } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Grid, GridItem } from "@chakra-ui/react";
 import "@/api/axiosDefaults";
-import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { useCurrentUser } from "@/contexts/useCurrentUser";
 // keep the home page loading as normal (instantly) since it's shown first
 import { HomePage } from "@/pages";
 // lazy load everything else:

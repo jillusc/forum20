@@ -1,44 +1,10 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { axiosRes } from "@/api/axiosDefaults";
 import { useFetchProfiles } from "@/hooks/useFetchProfiles";
-import { useCurrentUser } from "./CurrentUserContext";
+import { useCurrentUser } from "./useCurrentUser";
 import { followHelper, unfollowHelper } from "@/utils/utils";
 import type { Profile } from "@/types";
-
-type ProfileContextType = {
-  profileData: { results: Profile[] };
-  setProfileData: React.Dispatch<React.SetStateAction<Profile[]>>;
-  handleFollow: (clickedProfile: Profile) => Promise<void>;
-  handleUnfollow: (clickedProfile: Profile) => Promise<void>;
-};
-
-export const ProfileContext = createContext<ProfileContextType | null>(null);
-
-export const useProfileData = () => {
-  const context = useContext(ProfileContext);
-  if (!context)
-    throw new Error("useProfileData must be used within ProfileDataProvider");
-  return context.profileData;
-};
-
-export const useSetProfileData = () => {
-  const context = useContext(ProfileContext);
-  if (!context)
-    throw new Error(
-      "useSetProfileData must be used within ProfileDataProvider"
-    );
-  return {
-    setProfileData: context.setProfileData,
-    handleFollow: context.handleFollow,
-    handleUnfollow: context.handleUnfollow,
-  };
-};
+import { ProfileContext } from "./ProfileContextObject";
 
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   const { topProfiles } = useFetchProfiles(); // fetch profiles

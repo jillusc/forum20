@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import { Box, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import Avatar from "./ui/Avatar";
-import { useProfileData, useSetProfileData } from "@/contexts/ProfileContext";
-import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { useCurrentUser, useProfileData, useSetProfileData } from "@/contexts";
 
 const TopProfilesBase = () => {
   // get the profiles, handlers + current user from contexts:

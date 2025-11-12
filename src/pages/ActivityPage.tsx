@@ -8,7 +8,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { useCurrentUser } from "@/contexts/useCurrentUser";
 import { axiosRes } from "@/api/axiosDefaults";
 import type { Bookmark, Comment, Like } from "@/types";
 import {

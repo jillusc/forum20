@@ -18,8 +18,7 @@ import {
 import { Avatar, MoreDropdown } from "@/components/ui";
 import type { Post } from "@/types";
 import placeholderImage from "@/assets/post_image_placeholder.jpg";
-import { useCurrentUser } from "@/contexts/CurrentUserContext";
-import { useSetPosts } from "@/contexts/PostsContext";
+import { useCurrentUser, useSetPosts } from "@/contexts";
 import { axiosRes } from "@/api/axiosDefaults";
 import { postMenuItems } from "@/data/menuItems";
 

@@ -1,10 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ReactNode } from "react";
-import {
-  useCurrentUser,
-  useCurrentUserLoading,
-} from "@/contexts/CurrentUserContext";
+import { useCurrentUser, useCurrentUserLoading } from "@/contexts";
 
 interface Props {
   children: ReactNode;

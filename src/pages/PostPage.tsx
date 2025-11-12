@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Text, VStack } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
-import { useSetPosts } from "@/contexts/PostsContext";
+import { useSetPosts, useToast } from "@/contexts";
 import { CommentTemplate, PostTemplate } from "@/components";
 import { AddCommentForm, EditCommentForm } from "@/components";
 import type { Comment, Post } from "@/types";
@@ -11,7 +11,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import PostPageSkeleton from "./PostPageSkeleton";
 import axios from "axios";
 import { UIMessage } from "@/components/ui";
-import { useToast } from "@/contexts";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>(); // grab the post ID from the URL

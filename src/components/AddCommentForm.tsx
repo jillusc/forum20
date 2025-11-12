@@ -2,7 +2,7 @@ import { useState } from "react";
 import { HStack, Text, Textarea, VStack } from "@chakra-ui/react";
 import { Button, FormStyles } from "@/components/ui";
 import type { Comment, Post } from "@/types";
-import { useSetPosts } from "@/contexts/PostsContext";
+import { useSetPosts } from "@/contexts/usePosts";
 import { axiosRes } from "@/api/axiosDefaults";
 import axios from "axios";
 

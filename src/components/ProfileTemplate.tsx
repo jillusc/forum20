@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Box, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import { Avatar, Button, MoreDropdown } from "./ui";
 import type { Profile } from "@/types";
-import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { useCurrentUser } from "@/contexts/useCurrentUser";
 import { profileMenuItems } from "@/data/menuItems";
 
 interface Props {

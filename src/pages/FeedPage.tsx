@@ -1,7 +1,6 @@
 import { useState } from "react";
 import PostsPage from "@/pages/PostsPage";
-import { useCurrentUser } from "@/contexts/CurrentUserContext";
-import { usePosts } from "@/contexts/PostsContext";
+import { useCurrentUser, usePosts } from "@/contexts";
 import { Box } from "@chakra-ui/react";
 import { TopProfilesBase } from "@/components";
 import { SearchBar } from "@/components/ui";

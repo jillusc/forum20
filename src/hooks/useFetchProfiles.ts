@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { useCurrentUser } from "@/contexts/useCurrentUser";
 import { axiosRes } from "@/api/axiosDefaults";
 import type { Profile } from "@/types";
 import axios from "axios";

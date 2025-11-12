@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Input, Text } from "@chakra-ui/react";
 import { Button, FormStyles, TextLink } from "@/components/ui";
-import { useSetCurrentUser } from "@/contexts/CurrentUserContext";
+import { useSetCurrentUser } from "@/contexts";
 import { axiosRes } from "@/api/axiosDefaults";
 import axios from "axios";
 

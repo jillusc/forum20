@@ -6,10 +6,7 @@ import type { IconType } from "react-icons";
 import { NavItems } from "@/components";
 import { Avatar } from "@/components/ui";
 import logo from "../assets/logo.jpg";
-import {
-  useCurrentUser,
-  useSetCurrentUser,
-} from "@/contexts/CurrentUserContext";
+import { useCurrentUser, useSetCurrentUser } from "@/contexts/useCurrentUser";
 
 interface NavItem {
   label: string;

@@ -1,26 +1,9 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosRes } from "@/api/axiosDefaults";
 import axios, { isAxiosError, type AxiosRequestConfig } from "axios";
 import type { User } from "@/types";
-
-// type for the context value (user + setter):
-type CurrentUserContextType = {
-  currentUser: User | null;
-  setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
-  CULoading: boolean;
-};
-
-// context to hold the currentUser + setter (uses type as above):
-export const CurrentUserContext = createContext<CurrentUserContextType | null>(
-  null
-);
+import { CurrentUserContext } from "./CurrentUserContextObject";
 
 export function CurrentUserProvider({ children }: { children: ReactNode }) {
   // create/define state to track the current logged-in user:
@@ -164,32 +147,3 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
     </CurrentUserContext.Provider>
   );
 }
-
-// hook to get the value of state in line 26:
-export function useCurrentUser() {
-  const context = useContext(CurrentUserContext);
-  if (!context)
-    throw new Error("useCurrentUser must be used within a CurrentUserProvider");
-  return context.currentUser; // returns only the user
-}
-// hook to get the state setter in line 26:
-export function useSetCurrentUser() {
-  const context = useContext(CurrentUserContext);
-  if (!context)
-    throw new Error(
-      "useSetCurrentUser must be used within a CurrentUserProvider"
-    );
-  return context.setCurrentUser; // returns only the setter
-}
-export function useCurrentUserLoading() {
-  const context = useContext(CurrentUserContext);
-  if (!context)
-    throw new Error(
-      "useCurrentUserLoading must be used within a CurrentUserProvider"
-    );
-  return context.CULoading;
-}
-
-// lines 20 - 22: create the (empty) context object and export
-// line 24 - 135: create a provider component (it sets up state)
-// line 142: shows the component can wrap other JSX

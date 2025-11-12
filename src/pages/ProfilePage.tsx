@@ -4,7 +4,7 @@ import { Box } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
 import PostsPage from "@/pages/PostsPage";
 import type { Profile } from "@/types";
-import { useProfileData, useSetProfileData } from "@/contexts/ProfileContext";
+import { useProfileData, useSetProfileData } from "@/contexts";
 import { ProfileTemplate, TopProfilesBase } from "@/components";
 import { SearchBar } from "@/components/ui";
 import ProfilePageSkeletons from "./ProfilePageSkeleton";
