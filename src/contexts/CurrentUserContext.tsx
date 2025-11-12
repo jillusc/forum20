@@ -26,7 +26,7 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
   // create/define state to track the current logged-in user:
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 

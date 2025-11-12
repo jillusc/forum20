@@ -17,7 +17,7 @@ const LogInForm = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<LogInErrors>({});
 
   const navigate = useNavigate();

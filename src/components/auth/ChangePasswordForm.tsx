@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { HStack, Input, Text } from "@chakra-ui/react";
 import { Button, FormStyles } from "@/components/ui";
-import { useSetCurrentUser } from "@/contexts/CurrentUserContext";
 import { axiosRes } from "@/api/axiosDefaults";
 import axios from "axios";
 import { useToast } from "@/contexts";
@@ -22,7 +21,7 @@ const ChangePasswordForm = () => {
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ChangePasswordErrors>({});
 
   const showToast = useToast();
@@ -78,10 +77,7 @@ const ChangePasswordForm = () => {
 
     try {
       // NOTE: it requires a POST not a PUT!
-      const { data } = await axiosRes.post(
-        "/dj-rest-auth/password/change/",
-        dataToSend
-      );
+      await axiosRes.post("/dj-rest-auth/password/change/", dataToSend);
       showToast("Password changed.");
       navigate(`/profiles/${id}`);
     } catch (err: unknown) {

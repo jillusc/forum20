@@ -18,7 +18,7 @@ const EditProfileForm = () => {
 
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Errors>({});
-  const [submitting, setSubmitting] = useState(false);
+  const [_submitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -93,7 +93,7 @@ const EditProfileForm = () => {
     formData.append("content", bioText ?? "");
 
     try {
-      const { data } = await axiosRes.put(`/profiles/${id}/`, formData);
+      await axiosRes.put(`/profiles/${id}/`, formData);
       navigate(`/profiles/${id}`);
     } catch (err: unknown) {
       // TS type guard - safely confirms this is an Axios error:

@@ -29,7 +29,7 @@ const PostPage = () => {
   const [error, setError] = useState<string | null>(null); // to store any fetch errors
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [showAddCommentForm, setShowAddCommentForm] = useState(false);
-  const [deletingPost, setDeletingPost] = useState(false);
+  const [_deletingPost, setDeletingPost] = useState(false);
   const showToast = useToast();
 
   const handleEdit = () => {
@@ -168,7 +168,7 @@ const PostPage = () => {
       }
     };
     fetchPostAndComments(); // now call this async function
-  }, [id]); // if the id changes, re-render (= re-fetch)
+  }, [id, setPosts]); // if the id changes, re-render (= re-fetch)
 
   // Provide fallback UI while data is loading, handle fetch errors,
   // and prevent crashes if required data is missing:

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { axiosRes } from "@/api/axiosDefaults";
 import PostsPage from "@/pages/PostsPage";
 import type { Profile } from "@/types";

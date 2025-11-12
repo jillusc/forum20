@@ -19,7 +19,7 @@ const SignUpForm = () => {
   const [password1, setPassword1] = useState<string>("");
   const [password2, setPassword2] = useState<string>("");
 
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<SignUpErrors>({});
 
   const navigate = useNavigate();

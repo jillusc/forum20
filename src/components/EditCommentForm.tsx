@@ -21,7 +21,7 @@ interface Errors {
 const EditCommentForm = ({ commentId, setComments, onCancel }: Props) => {
   const [content, setContent] = useState<string>(""); // controlled input
 
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
 
   // upon mount, this fetches the existing comment:

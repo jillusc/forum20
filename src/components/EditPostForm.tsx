@@ -21,7 +21,7 @@ const EditPostForm = () => {
 
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Errors>({});
-  const [submitting, setSubmitting] = useState(false);
+  const [_submitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -113,7 +113,7 @@ const EditPostForm = () => {
     formData.append("is_private", String(isPrivate));
 
     try {
-      const { data } = await axiosRes.put(`/posts/${id}/`, formData);
+      await axiosRes.put(`/posts/${id}/`, formData);
       navigate(`/posts/${id}`); // redirect to the new post's page
     } catch (err: unknown) {
       // TS type guard - safely confirms this is an Axios error:

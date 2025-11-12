@@ -24,7 +24,7 @@ const AddCommentForm = ({ postId, setPost, setComments, onCancel }: Props) => {
   const [content, setContent] = useState<string>(""); // controlled input
   const setPosts = useSetPosts();
 
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
 
   if (!postId) return <Text>Invalid post ID</Text>;
