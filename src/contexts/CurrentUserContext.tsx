@@ -37,8 +37,8 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
             setError(
               typeof data === "string"
                 ? data
-                : data.detail ??
-                    "Couldn't load your activity. Please try again."
+                : (data.detail ??
+                    "Couldn't load your activity. Please try again."),
             );
           } else {
             console.error("Unexpected error:", err); // log all other errors
@@ -73,7 +73,7 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
         }
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     // handles 401 errors by refreshing the token and retrying the request or logging the user out if the refresh fails!
@@ -100,19 +100,17 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
                 {
                   // with the refresh token from localStorage:
                   refresh: localStorage.getItem("refreshToken"),
-                }
+                },
               );
               // extract + store the new access token from the response:
               const newAccessToken = refreshResponse.data.access;
               // update the default Authorization header on the Axios instance with the new token:
-              axiosRes.defaults.headers.common[
-                "Authorization"
-              ] = `Bearer ${newAccessToken}`;
+              axiosRes.defaults.headers.common["Authorization"] =
+                `Bearer ${newAccessToken}`;
               // also update the Authorization header on the original request:
               originalRequest.headers = originalRequest.headers || {};
-              originalRequest.headers[
-                "Authorization"
-              ] = `Bearer ${newAccessToken}`;
+              originalRequest.headers["Authorization"] =
+                `Bearer ${newAccessToken}`;
               // retry the original request with the new token:
               return axiosRes(originalRequest);
             } catch (refreshError) {
@@ -127,7 +125,7 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
         }
         // otherwise: if the error is not a 401, or the request was already retried, just reject it:
         return Promise.reject(error);
-      }
+      },
     );
     // optional cleanup: detach the interceptors if the component unmounts
     return () => {

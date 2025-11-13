@@ -55,7 +55,7 @@ const SignUpForm = () => {
     try {
       const { data } = await axiosRes.post(
         "/dj-rest-auth/registration/",
-        dataToSend
+        dataToSend,
       );
       setCurrentUser(data.user);
       navigate("/");
@@ -77,7 +77,7 @@ const SignUpForm = () => {
             Object.entries(data).map(([key, value]) => [
               key,
               Array.isArray(value) ? value[0] : String(value),
-            ])
+            ]),
           );
           setErrors({
             ...formattedErrors,

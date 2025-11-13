@@ -70,7 +70,7 @@ const EditPostForm = () => {
               : {
                   non_field_errors:
                     data.detail ?? "Couldn't load your post. Please try again.",
-                }
+                },
           );
         } else {
           console.error("Unexpected error:", err); // log all other errors
@@ -133,7 +133,7 @@ const EditPostForm = () => {
             Object.entries(data).map(([key, value]) => [
               key,
               Array.isArray(value) ? value[0] : String(value),
-            ])
+            ]),
           );
           setErrors({
             ...formattedErrors,

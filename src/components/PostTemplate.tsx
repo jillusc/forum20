@@ -98,7 +98,7 @@ const PostTemplate = ({
               like_id:
                 status === 204 || data.detail === "unliked" ? null : data.id,
             }
-          : prev
+          : prev,
       );
     } catch (err) {
       console.error("Error toggling like:", err);
@@ -131,7 +131,7 @@ const PostTemplate = ({
                   ? null
                   : data.id,
             }
-          : prev
+          : prev,
       );
     } catch (err) {
       console.error("Error toggling bookmark:", err);

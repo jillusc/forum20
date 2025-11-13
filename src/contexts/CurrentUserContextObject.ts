@@ -8,5 +8,5 @@ export type CurrentUserContextType = {
 };
 
 export const CurrentUserContext = createContext<CurrentUserContextType | null>(
-  null
+  null,
 );

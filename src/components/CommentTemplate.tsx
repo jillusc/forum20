@@ -45,7 +45,7 @@ const CommentTemplate = ({ comment, handleEdit, handleDelete }: Props) => {
               <MoreDropdown
                 menuItems={commentMenuItems(
                   handleEdit, // now it already has the id from parent
-                  handleDelete
+                  handleDelete,
                 )}
                 width="130px"
               />

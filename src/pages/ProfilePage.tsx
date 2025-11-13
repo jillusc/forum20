@@ -42,7 +42,7 @@ const ProfilePage = () => {
           setError(
             typeof data === "string"
               ? data
-              : data.detail ?? "Couldn't load profile. Please try again."
+              : (data.detail ?? "Couldn't load profile. Please try again."),
           );
         } else {
           console.error("Unexpected error:", err); // log all other errors

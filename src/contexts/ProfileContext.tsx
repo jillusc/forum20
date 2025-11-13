@@ -24,7 +24,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         followed: clickedProfile.id,
       });
       setProfileData((prev) =>
-        prev.map((profile) => followHelper(profile, clickedProfile, data.id))
+        prev.map((profile) => followHelper(profile, clickedProfile, data.id)),
       );
     } catch (err) {
       console.error("Error following profile:", err);
@@ -36,7 +36,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     try {
       await axiosRes.delete(`/followers/${clickedProfile.following_id}/`);
       setProfileData((prev) =>
-        prev.map((profile) => unfollowHelper(profile, clickedProfile))
+        prev.map((profile) => unfollowHelper(profile, clickedProfile)),
       );
     } catch (err) {
       console.error("Error unfollowing profile:", err);

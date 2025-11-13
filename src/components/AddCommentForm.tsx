@@ -55,14 +55,14 @@ const AddCommentForm = ({ postId, setPost, setComments, onCancel }: Props) => {
         results: [data, ...prev.results], // prepend the new comment
       }));
       setPost((prev) =>
-        prev ? { ...prev, comments_count: prev.comments_count + 1 } : prev
+        prev ? { ...prev, comments_count: prev.comments_count + 1 } : prev,
       );
       setPosts((prev) => ({
         ...prev,
         results: prev.results.map((post) =>
           post.id === postId
             ? { ...post, comments_count: post.comments_count + 1 }
-            : post
+            : post,
         ),
       }));
       setContent(""); // clear input after successful submit

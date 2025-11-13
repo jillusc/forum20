@@ -17,7 +17,7 @@ const EditPostForm = lazy(() => import("@/components/EditPostForm"));
 const LogInForm = lazy(() => import("@/components/auth/LogInForm"));
 const SignUpForm = lazy(() => import("@/components/auth/SignUpForm"));
 const ChangePasswordForm = lazy(
-  () => import("@/components/auth/ChangePasswordForm")
+  () => import("@/components/auth/ChangePasswordForm"),
 );
 const EditProfileForm = lazy(() => import("@/components/auth/EditProfileForm"));
 import { NavBar, TopProfilesAside } from "@/components";

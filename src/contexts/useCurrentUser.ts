@@ -12,7 +12,7 @@ export function useSetCurrentUser() {
   const context = useContext(CurrentUserContext);
   if (!context)
     throw new Error(
-      "useSetCurrentUser must be used within a CurrentUserProvider"
+      "useSetCurrentUser must be used within a CurrentUserProvider",
     );
   return context.setCurrentUser;
 }
@@ -21,7 +21,7 @@ export function useCurrentUserLoading() {
   const context = useContext(CurrentUserContext);
   if (!context)
     throw new Error(
-      "useCurrentUserLoading must be used within a CurrentUserProvider"
+      "useCurrentUserLoading must be used within a CurrentUserProvider",
     );
   return context.CULoading;
 }

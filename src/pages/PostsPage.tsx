@@ -37,7 +37,7 @@ const PostsPage = ({
       try {
         // await the response and destructure data:
         const { data } = await axiosRes.get(
-          `/posts/?${filter}&search=${searchTerm}`
+          `/posts/?${filter}&search=${searchTerm}`,
         );
         // take the response and store its data in state:
         setPosts({ results: data.results, next: data.next });
@@ -54,7 +54,7 @@ const PostsPage = ({
           setError(
             typeof data === "string"
               ? data
-              : data.detail ?? "Couldn't load posts. Please try again."
+              : (data.detail ?? "Couldn't load posts. Please try again."),
           );
         } else {
           console.error("Unexpected error:", err); // log all other errors

@@ -40,7 +40,7 @@ const ActivityPage = () => {
         const [likesRes, commentsRes, bookmarksRes] = await Promise.all([
           axiosRes.get(`/likes/?user_id=${currentUser!.profile_id}`), // new
           axiosRes.get(
-            `/comments/?user_id=${currentUser!.profile_id}&user_comments=true`
+            `/comments/?user_id=${currentUser!.profile_id}&user_comments=true`,
           ),
           axiosRes.get(`/bookmarks/?user_id=${currentUser!.profile_id}`),
         ]);
@@ -113,7 +113,7 @@ const ActivityPage = () => {
           `Liked on ${new Date(item.created_at).toLocaleDateString("en-GB")}`}
         {type === "Bookmark" &&
           `Bookmarked on ${new Date(item.created_at).toLocaleDateString(
-            "en-GB"
+            "en-GB",
           )}`}
       </Text>
     </Box>
@@ -245,7 +245,7 @@ const ActivityPage = () => {
             ) : (
               <SimpleGrid columns={{ base: 2, md: 3 }} gap={4}>
                 {bookmarks.map((bookmark) =>
-                  renderGridItem(bookmark, "Bookmark")
+                  renderGridItem(bookmark, "Bookmark"),
                 )}
               </SimpleGrid>
             ))}

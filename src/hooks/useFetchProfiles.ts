@@ -14,7 +14,7 @@ export function useFetchProfiles() {
     const fetchTopProfiles = async () => {
       try {
         const { data } = await axiosRes.get(
-          "/profiles/?ordering=-followers_count"
+          "/profiles/?ordering=-followers_count",
         );
         setTopProfiles(data.results.slice(0, 10));
       } catch (err: unknown) {

@@ -6,7 +6,7 @@ import axios from "axios";
 export const followHelper = (
   profile: Profile,
   clickedProfile: Profile,
-  following_id: number
+  following_id: number,
 ): Profile => {
   if (profile.id === clickedProfile.id) {
     // "if the id of the current profile in the array is the same as the one just clicked, do the following:"
@@ -28,7 +28,7 @@ export const followHelper = (
 // updates a profile after unfollowing:
 export const unfollowHelper = (
   profile: Profile,
-  clickedProfile: Profile
+  clickedProfile: Profile,
 ): Profile => {
   if (profile.id === clickedProfile.id) {
     return {
@@ -48,7 +48,7 @@ export const unfollowHelper = (
 // generic function fetches the next page of a paginated resource:
 export const fetchMoreData = async <T extends { id: number }>(
   resource: { results: T[]; next: string | null }, // the current resource state with results and next page URL
-  setResource: React.Dispatch<React.SetStateAction<typeof resource>> // the state setter function to update the resource
+  setResource: React.Dispatch<React.SetStateAction<typeof resource>>, // the state setter function to update the resource
 ) => {
   if (!resource.next) return; // if there are no more pages, stop here and do nothing.
   try {

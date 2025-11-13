@@ -10,7 +10,7 @@ export interface MenuItem {
 
 export const postMenuItems = (
   onEdit: () => void,
-  onDelete: () => void
+  onDelete: () => void,
 ): MenuItem[] => [
   { label: "Edit", icon: FaEdit, onClick: onEdit },
   { label: "Delete", icon: FaTrashAlt, onClick: onDelete },
@@ -18,7 +18,7 @@ export const postMenuItems = (
 
 export const profileMenuItems = (
   navigate: NavigateFunction,
-  id: string
+  id: string,
 ): MenuItem[] => [
   {
     label: "Edit profile",
@@ -34,5 +34,5 @@ export const profileMenuItems = (
 
 export const commentMenuItems = (
   onEdit: () => void,
-  onDelete: () => void
+  onDelete: () => void,
 ): MenuItem[] => postMenuItems(onEdit, onDelete);

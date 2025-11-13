@@ -85,7 +85,7 @@ const AddPostForm = () => {
             Object.entries(data).map(([key, value]) => [
               key,
               Array.isArray(value) ? value[0] : String(value),
-            ])
+            ]),
           );
           setErrors({
             ...formattedErrors,

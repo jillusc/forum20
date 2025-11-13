@@ -61,7 +61,7 @@ const EditProfileForm = () => {
                   non_field_errors:
                     data.detail ??
                     "Couldn't load your profile. Please try again.",
-                }
+                },
           );
         } else {
           console.error("Unexpected error:", err); // log all other errors
@@ -113,7 +113,7 @@ const EditProfileForm = () => {
             Object.entries(data).map(([key, value]) => [
               key,
               Array.isArray(value) ? value[0] : String(value),
-            ])
+            ]),
           );
           setErrors({
             ...formattedErrors,

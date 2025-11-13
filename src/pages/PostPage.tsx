@@ -37,7 +37,7 @@ const PostPage = () => {
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this post?"
+      "Are you sure you want to delete this post?",
     );
     if (!confirmDelete) return; // stop if the user cancels
     setDeletingPost(true);
@@ -58,7 +58,7 @@ const PostPage = () => {
         setError(
           typeof data === "string"
             ? data
-            : data.detail ?? "Could not delete this post. Please try again."
+            : (data.detail ?? "Could not delete this post. Please try again."),
         );
       } else {
         console.error("Unexpected error:", err); // log all other errors
@@ -82,7 +82,7 @@ const PostPage = () => {
       setPost((prev) =>
         prev
           ? { ...prev, comments_count: Math.max(prev.comments_count - 1, 0) }
-          : prev
+          : prev,
       );
       // update the same post inside the global posts context:
       setPosts((prevPosts) => ({
@@ -90,7 +90,7 @@ const PostPage = () => {
         results: prevPosts.results.map((post) =>
           post.id === post?.id
             ? { ...post, comments_count: Math.max(post.comments_count - 1, 0) }
-            : post
+            : post,
         ),
       }));
       showToast("Comment deleted.");
@@ -126,14 +126,14 @@ const PostPage = () => {
         setPosts((prevPosts) => {
           // check if the post is already in context state:
           const exists = prevPosts.results.some(
-            (post) => post.id === postRes.data.id
+            (post) => post.id === postRes.data.id,
           );
           // if it does exist, update the existing post with new data:
           if (exists) {
             return {
               ...prevPosts,
               results: prevPosts.results.map((post) =>
-                post.id === postRes.data.id ? postRes.data : post
+                post.id === postRes.data.id ? postRes.data : post,
               ),
             };
           }
@@ -156,7 +156,7 @@ const PostPage = () => {
           setError(
             typeof data === "string"
               ? data
-              : data.detail ?? "Couldn't load post. Please try again."
+              : (data.detail ?? "Couldn't load post. Please try again."),
           );
         } else {
           console.error("Unexpected error:", err); // log all other errors
@@ -226,7 +226,7 @@ const PostPage = () => {
                   handleEdit={() => handleEditComment(comment.id)}
                   handleDelete={() => handleDeleteComment(comment.id)}
                 />
-              )
+              ),
             )
           ) : (
             <Box maxWidth="768px" width="100%" mx="auto" p={4}>

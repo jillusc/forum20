@@ -40,7 +40,7 @@ const NavBar = () => {
     ? NavItems.LoggedInItems.map((item) =>
         item.label === "Profile" && currentUser
           ? { ...item, path: `/profiles/${currentUser.profile_id}` }
-          : item
+          : item,
       )
     : NavItems.LoggedOutItems;
 
