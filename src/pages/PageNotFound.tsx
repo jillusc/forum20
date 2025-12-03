@@ -4,7 +4,8 @@ import { TextLink } from "@/components/ui";
 const PageNotFound = () => {
   return (
     <Box
-      width="400px"
+      maxW="400px"
+      w="90%"
       mx="auto"
       mt={8}
       px={4}
@@ -12,13 +13,14 @@ const PageNotFound = () => {
       borderWidth="2px"
       borderColor="primary"
       borderRadius="2xl"
+      textAlign="center"
     >
       <VStack align="center" gap={4}>
         <Heading as="h1" size="2xl">
           404 - Page not found
         </Heading>
         <Text fontSize="lg">The page you're looking for doesn't exist.</Text>
-        <TextLink to="/">Go to the forum20 home page</TextLink>
+        <TextLink to="/">Go to the forum20 homepage</TextLink>
       </VStack>
     </Box>
   );
