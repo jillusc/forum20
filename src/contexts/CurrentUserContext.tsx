@@ -45,7 +45,6 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
             setError("Something went wrong.");
           }
           setCurrentUser(null);
-          navigate("/login"); // redirect if token invalid/unmount the provider
         } finally {
           setLoading(false);
         }
